@@ -1,5 +1,10 @@
 package tho.nill.sqlmock;
 
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.Reader;
+import java.io.Writer;
+
 public class AbfrageParameter implements Comparable<AbfrageParameter>{
     private int index;
     private Object value;
@@ -9,7 +14,7 @@ public class AbfrageParameter implements Comparable<AbfrageParameter>{
         this.index = index;
         this.value = value;
     }
-
+    
     public int getIndex() {
         return index;
     }
@@ -55,5 +60,7 @@ public class AbfrageParameter implements Comparable<AbfrageParameter>{
     public String toString() {
         return "[" + index + "] = " + value;
     }
+    
+  
     
 }
