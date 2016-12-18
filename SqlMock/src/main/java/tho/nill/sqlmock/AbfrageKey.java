@@ -1,17 +1,17 @@
 package tho.nill.sqlmock;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 
 public class AbfrageKey {
-    
+
     private String statement;
     private int index;
     private List<AbfrageParameter> parameter = new ArrayList<>();
-   
-    public AbfrageKey(String statement,int index,List<AbfrageParameter> parameter ) {
+
+    public AbfrageKey(String statement, int index,
+            List<AbfrageParameter> parameter) {
         super();
         this.statement = statement;
         this.index = index;
@@ -27,13 +27,9 @@ public class AbfrageKey {
         return index;
     }
 
-
     public List<AbfrageParameter> getParameter() {
         return parameter;
     }
-
-
-
 
     @Override
     public int hashCode() {
@@ -46,9 +42,6 @@ public class AbfrageKey {
                 + ((statement == null) ? 0 : statement.hashCode());
         return result;
     }
-
-
-
 
     @Override
     public boolean equals(Object obj) {
@@ -73,9 +66,6 @@ public class AbfrageKey {
             return false;
         return true;
     }
-
-
-
 
     @Override
     public String toString() {

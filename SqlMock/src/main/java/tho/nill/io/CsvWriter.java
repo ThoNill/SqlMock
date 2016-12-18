@@ -1,9 +1,9 @@
 package tho.nill.io;
 
 import java.io.IOException;
-import java.io.Reader;
 import java.io.Writer;
-import java.util.ArrayList;
+import java.sql.ResultSetMetaData;
+import java.sql.SQLException;
 import java.util.List;
 
 import tho.nill.sqlmock.AbfrageDaten;
@@ -19,8 +19,9 @@ public class CsvWriter implements AbfrageWriter {
     }
 
     @Override
-    public void write(AbfrageDaten daten) throws IOException {
+    public void write(AbfrageDaten daten) throws IOException, SQLException {
         writeAbfrageKey(daten.getKey());
+        writeMetaData(daten.getMetaData());
         writeDaten(daten.getDaten());
     }
 
@@ -29,9 +30,9 @@ public class CsvWriter implements AbfrageWriter {
         write(key.getStatement());
         write(key.getIndex());
         writeParameter(key.getParameter());
-        
+
     }
-    
+
     private void writeParameter(List<AbfrageParameter> parameter)
             throws IOException {
         write("Parameter");
@@ -39,7 +40,21 @@ public class CsvWriter implements AbfrageWriter {
         for (AbfrageParameter p : parameter) {
             write(p.getValue());
         }
-        
+
+    }
+
+    private void writeMetaData(ResultSetMetaData metaData) throws IOException,
+            SQLException {
+        write("Meta");
+        if (metaData == null) {
+            write(0);
+        } else {
+            int spaltenAnzahl = metaData.getColumnCount();
+            write(spaltenAnzahl);
+            for (int i = 1; i <= spaltenAnzahl; i++) {
+                write(metaData.getColumnLabel(i));
+            }
+        }
     }
 
     private void writeDaten(Object[][] daten) throws IOException {
@@ -57,8 +72,21 @@ public class CsvWriter implements AbfrageWriter {
     }
 
     private void write(Object object) throws IOException {
-        ReadWriteUtil.write(writer, object.toString(), '|');
+        write(writer, object.toString(), '|');
     }
 
+    public static void write(Writer writer, String text, char stop)
+            throws IOException {
+        char[] zeichen = text.toCharArray();
+        for (char z : zeichen) {
+            if (z == stop) {
+                writer.append('\\');
+            }
+            writer.append(z);
+
+        }
+        writer.append(stop);
+
+    }
 
 }

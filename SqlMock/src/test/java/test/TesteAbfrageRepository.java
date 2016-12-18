@@ -7,6 +7,7 @@ import java.io.CharArrayWriter;
 import java.io.IOException;
 import java.io.Reader;
 import java.io.Writer;
+import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -14,7 +15,6 @@ import org.junit.Test;
 
 import tho.nill.io.CsvReader;
 import tho.nill.io.CsvWriter;
-import tho.nill.io.ReadWriteUtil;
 import tho.nill.sqlmock.AbfrageDaten;
 import tho.nill.sqlmock.AbfrageKey;
 import tho.nill.sqlmock.AbfrageParameter;
@@ -26,7 +26,8 @@ public class TesteAbfrageRepository {
     public void read() {
         Reader reader = new CharArrayReader("ein|".toCharArray());
         try {
-            assertEquals("ein", ReadWriteUtil.readUntil(reader, '|'));
+            CsvReader r = new CsvReader(reader);
+            assertEquals("ein", r.readUntil(reader, '|'));
         } catch (IOException e) {
             e.printStackTrace();
            fail("Nicht erwartete Asnahme");
@@ -37,7 +38,8 @@ public class TesteAbfrageRepository {
     public void readMitEscape() {
         Reader reader = new CharArrayReader("ein\\||zwei|".toCharArray());
         try {
-            assertEquals("ein|", ReadWriteUtil.readUntil(reader, '|'));
+            CsvReader r = new CsvReader(reader);
+            assertEquals("ein|", r.readUntil(reader, '|'));
         } catch (IOException e) {
             e.printStackTrace();
            fail("Nicht erwartete Asnahme");
@@ -51,7 +53,7 @@ public class TesteAbfrageRepository {
          AbfrageKey key = erzeugeKey();
          
          Object [][] datenArray = { { "200"} };
-         AbfrageDaten daten = new AbfrageDaten(key, datenArray);
+         AbfrageDaten daten = new AbfrageDaten(key,datenArray);
          
          repo.put(daten);
          AbfrageDaten gefunden = repo.get(erzeugeAbfrageKey());
@@ -139,7 +141,8 @@ public class TesteAbfrageRepository {
             } else {
                 assertNull(neuGelesen.getDaten());
             }
-        } catch (IOException e) {
+            assertNull(neuGelesen.getMetaData());
+        } catch (Exception e) {
             e.printStackTrace();
             fail("unerwartete Ausnahme");
         }
