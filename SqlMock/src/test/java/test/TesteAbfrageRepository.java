@@ -7,9 +7,12 @@ import java.io.CharArrayWriter;
 import java.io.IOException;
 import java.io.Reader;
 import java.io.Writer;
+import java.sql.ResultSetMetaData;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
+
+import javax.sql.rowset.RowSetMetaDataImpl;
 
 import org.junit.Test;
 
@@ -104,14 +107,14 @@ public class TesteAbfrageRepository {
     public void readWrite()  {
         
         Object [][] datenArray = { { "200"} };
-        readWrite(datenArray);
+        readWrite(datenArray,null);
     } 
     
     @Test 
     public void readWriteLeereDaten()  {
         
         Object [][] datenArray = { { } };
-        readWrite(datenArray);
+        readWrite(datenArray,null);
      
     }
     
@@ -119,13 +122,29 @@ public class TesteAbfrageRepository {
     public void readWriteNullDaten()  {
         
         Object [][] datenArray = null;
-        readWrite(datenArray);
+        readWrite(datenArray,null);
+     
+    }  
+    
+    @Test 
+    public void readWriteMitMetaDaten() throws SQLException  {
+        
+        
+        RowSetMetaDataImpl metaData = new RowSetMetaDataImpl();
+        metaData.setColumnCount(4);
+        metaData.setColumnLabel(1,"Eins");
+        metaData.setColumnLabel(2,"Zwei");
+        metaData.setColumnLabel(3,"Drei");
+        metaData.setColumnLabel(4,"Vier");
+        
+        Object [][] datenArray = null;
+        readWrite(datenArray,metaData);
      
     }  
 
-    protected void readWrite(Object[][] datenArray) {
+    protected void readWrite(Object[][] datenArray,ResultSetMetaData metaData) {
         AbfrageKey key = erzeugeKey();
-        AbfrageDaten daten = new AbfrageDaten(key, datenArray);
+        AbfrageDaten daten = new AbfrageDaten(key, datenArray,metaData );
         
         CharArrayWriter writer = new CharArrayWriter();
         CsvWriter csvWriter = new CsvWriter(writer);
@@ -141,7 +160,12 @@ public class TesteAbfrageRepository {
             } else {
                 assertNull(neuGelesen.getDaten());
             }
-            assertNull(neuGelesen.getMetaData());
+            if (metaData == null) {
+                assertNull(neuGelesen.getMetaData());
+            } else {
+                assertEquals(metaData.getColumnCount(),neuGelesen.getMetaData().getColumnCount());
+                assertEquals(metaData.getColumnLabel(2),neuGelesen.getMetaData().getColumnLabel(2));
+            }
         } catch (Exception e) {
             e.printStackTrace();
             fail("unerwartete Ausnahme");
