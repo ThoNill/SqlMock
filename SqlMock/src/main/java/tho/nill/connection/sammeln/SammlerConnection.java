@@ -1,5 +1,11 @@
-package tho.nill.connection;
+package tho.nill.connection.sammeln;
 
+import java.io.File;
+import java.io.FileReader;
+import java.io.FileWriter;
+import java.io.IOException;
+import java.io.Reader;
+import java.io.Writer;
 import java.sql.Array;
 import java.sql.Blob;
 import java.sql.CallableStatement;
@@ -19,12 +25,82 @@ import java.util.Map;
 import java.util.Properties;
 import java.util.concurrent.Executor;
 
-public class MockConnection implements Connection {
+import org.apache.log4j.Logger;
+
+import tho.nill.connection.AbfrageConfiguration;
+import tho.nill.db.AbfrageUmgebung;
+import tho.nill.io.CsvReader;
+import tho.nill.io.CsvWriter;
+import tho.nill.sqlmock.AbfrageRepository;
+import tho.nill.sqlmock.SqlMockException;
+
+public class SammlerConnection implements Connection {
+    private static final Logger LOG = Logger.getLogger(SammlerConnection.class);
+
+    
+    private static AbfrageConfiguration defaultConfiguration = new AbfrageConfiguration(
+            "abfragen");
+
+    private AbfrageConfiguration configuration;
+    private AbfrageRepository repository;
+    private AbfrageUmgebung umgebung;
+
     private Connection con;
 
-    public MockConnection(Connection con) {
+    public static void setDefaultConfiguration(
+            AbfrageConfiguration configuration) {
+        SammlerConnection.defaultConfiguration = configuration;
+    }
+
+    public SammlerConnection(Connection con) {
+        this(con, SammlerConnection.defaultConfiguration);
+    }
+
+    public SammlerConnection(Connection con, AbfrageConfiguration configuration) {
         super();
         this.con = con;
+        this.configuration = configuration;
+        this.repository = new AbfrageRepository();
+        this.umgebung = new AbfrageUmgebung();
+     //   prepareRepository();
+    }
+
+    private void prepareRepository() {
+        File datei = new File(configuration.getFileName());
+        if (datei.isFile() && datei.canRead()) {
+            try {
+                Reader input = new FileReader(datei);
+                CsvReader reader = new CsvReader(input);
+                repository.read(reader);
+                input.close();
+            } catch (IOException e) {
+                LOG.error("Unerwartete Ausnahme {}",e);
+                throw new SqlMockException("Ausnahme beim Lesen von Datei "
+                        + datei.getAbsolutePath(), e);
+            }
+        }
+
+    }
+
+    private void writeRepository() {
+        File datei = new File(configuration.getFileName());
+        if (!datei.exists()) {
+            try {
+                Writer output = new FileWriter(datei);
+                CsvWriter writer = new CsvWriter(output);
+                repository.write(writer);
+                output.close();
+            } catch (IOException e) {
+                LOG.error("Unerwartete Ausnahme {}",e);
+                throw new SqlMockException("Ausnahme beim Schreiben von Datei "
+                        + datei.getAbsolutePath(), e);
+            } catch (SQLException e) {
+                LOG.error("Unerwartete Ausnahme {}",e);
+                throw new SqlMockException("Ausnahme beim Schreiben von Datei "
+                        + datei.getAbsolutePath(), e);
+            }
+        }
+
     }
 
     @Override
@@ -40,6 +116,7 @@ public class MockConnection implements Connection {
     @Override
     public void close() throws SQLException {
         con.close();
+        writeRepository();
     }
 
     @Override
@@ -73,23 +150,27 @@ public class MockConnection implements Connection {
         return con.createSQLXML();
     }
 
+    
     @Override
     public Statement createStatement() throws SQLException {
-        return con.createStatement();
+        Statement stmt =  con.createStatement();
+        return new SammlerStatement(stmt, repository, umgebung,"");
     }
 
     @Override
     public Statement createStatement(int resultSetType,
             int resultSetConcurrency, int resultSetHoldability)
             throws SQLException {
-        return con.createStatement(resultSetType, resultSetConcurrency,
+        Statement stmt = con.createStatement(resultSetType, resultSetConcurrency,
                 resultSetHoldability);
+        return new SammlerStatement(stmt, repository, umgebung,"");
     }
 
     @Override
     public Statement createStatement(int resultSetType, int resultSetConcurrency)
             throws SQLException {
-        return con.createStatement(resultSetType, resultSetConcurrency);
+        Statement stmt =con.createStatement(resultSetType, resultSetConcurrency);
+        return new SammlerStatement(stmt, repository, umgebung,"");
     }
 
     @Override
@@ -182,56 +263,70 @@ public class MockConnection implements Connection {
     public CallableStatement prepareCall(String sql, int resultSetType,
             int resultSetConcurrency, int resultSetHoldability)
             throws SQLException {
-        return con.prepareCall(sql, resultSetType, resultSetConcurrency,
+        CallableStatement stmt = con.prepareCall(sql, resultSetType, resultSetConcurrency,
                 resultSetHoldability);
+        return new SammlerCallableStatement(stmt, repository, umgebung,"");
     }
 
     @Override
     public CallableStatement prepareCall(String sql, int resultSetType,
             int resultSetConcurrency) throws SQLException {
-        return con.prepareCall(sql, resultSetType, resultSetConcurrency);
+        CallableStatement stmt = con.prepareCall(sql, resultSetType, resultSetConcurrency);
+        return new SammlerCallableStatement(stmt, repository, umgebung,"");
+
     }
 
     @Override
     public CallableStatement prepareCall(String sql) throws SQLException {
-        return con.prepareCall(sql);
+        CallableStatement stmt = con.prepareCall(sql);
+        return new SammlerCallableStatement(stmt, repository, umgebung,sql);
+
     }
 
     @Override
     public PreparedStatement prepareStatement(String sql, int resultSetType,
             int resultSetConcurrency, int resultSetHoldability)
             throws SQLException {
-        return con.prepareStatement(sql, resultSetType, resultSetConcurrency,
+        PreparedStatement stmt = con.prepareStatement(sql, resultSetType, resultSetConcurrency,
                 resultSetHoldability);
+        return new SammlerPreparedStatement(stmt, repository, umgebung,"");
+
     }
 
     @Override
     public PreparedStatement prepareStatement(String sql, int resultSetType,
             int resultSetConcurrency) throws SQLException {
-        return con.prepareStatement(sql, resultSetType, resultSetConcurrency);
+        PreparedStatement stmt = con.prepareStatement(sql, resultSetType, resultSetConcurrency);
+        return new SammlerPreparedStatement(stmt, repository, umgebung,sql);
     }
 
     @Override
     public PreparedStatement prepareStatement(String sql, int autoGeneratedKeys)
             throws SQLException {
-        return con.prepareStatement(sql, autoGeneratedKeys);
+        PreparedStatement stmt = con.prepareStatement(sql, autoGeneratedKeys);
+        return new SammlerPreparedStatement(stmt, repository, umgebung,sql);
+
     }
 
     @Override
     public PreparedStatement prepareStatement(String sql, int[] columnIndexes)
             throws SQLException {
-        return con.prepareStatement(sql, columnIndexes);
+        PreparedStatement stmt = con.prepareStatement(sql, columnIndexes);
+        return new SammlerPreparedStatement(stmt, repository, umgebung,sql);
+
     }
 
     @Override
     public PreparedStatement prepareStatement(String sql, String[] columnNames)
             throws SQLException {
-        return con.prepareStatement(sql, columnNames);
+        PreparedStatement stmt = con.prepareStatement(sql, columnNames);
+        return new SammlerPreparedStatement(stmt, repository, umgebung,sql);
     }
 
     @Override
     public PreparedStatement prepareStatement(String sql) throws SQLException {
-        return con.prepareStatement(sql);
+        PreparedStatement stmt = con.prepareStatement(sql);
+        return new SammlerPreparedStatement(stmt, repository, umgebung,sql);
     }
 
     @Override

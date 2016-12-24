@@ -1,13 +1,22 @@
 package tho.nill.sqlmock;
 
-
 public class AbfrageParameter implements Comparable<AbfrageParameter> {
     private int index;
+    private String name;
     private Object value;
 
     public AbfrageParameter(int index, Object value) {
+        this(index, "", value);
+    }
+
+    public AbfrageParameter(String name, Object value) {
+        this(0, name, value);
+    }
+
+    public AbfrageParameter(int index, String name, Object value) {
         super();
         this.index = index;
+        this.name = name;
         this.value = value;
     }
 
@@ -21,7 +30,22 @@ public class AbfrageParameter implements Comparable<AbfrageParameter> {
 
     @Override
     public int compareTo(AbfrageParameter o) {
-        return index - o.index;
+        if (index > 0 && o.index > 0) {
+            return index - o.index;
+        }
+
+        if (index == 0 && o.index == 0) {
+            return name.compareTo(o.name);
+        }
+        if (index == 0 && o.index > 0) {
+            return -1;
+        }
+        return 1;
+
+    }
+
+    public String getName() {
+        return name;
     }
 
     @Override
@@ -29,6 +53,7 @@ public class AbfrageParameter implements Comparable<AbfrageParameter> {
         final int prime = 31;
         int result = 1;
         result = prime * result + index;
+        result = prime * result + ((name == null) ? 0 : name.hashCode());
         result = prime * result + ((value == null) ? 0 : value.hashCode());
         return result;
     }
@@ -44,6 +69,11 @@ public class AbfrageParameter implements Comparable<AbfrageParameter> {
         AbfrageParameter other = (AbfrageParameter) obj;
         if (index != other.index)
             return false;
+        if (name == null) {
+            if (other.name != null)
+                return false;
+        } else if (!name.equals(other.name))
+            return false;
         if (value == null) {
             if (other.value != null)
                 return false;
@@ -54,7 +84,8 @@ public class AbfrageParameter implements Comparable<AbfrageParameter> {
 
     @Override
     public String toString() {
-        return "[" + index + "] = " + value;
+        return "AbfrageParameter [index=" + index + ", name=" + name
+                + ", value=" + value + "]";
     }
 
 }

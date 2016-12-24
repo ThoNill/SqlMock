@@ -69,7 +69,7 @@ public class AbfrageKey {
 
     @Override
     public String toString() {
-        return "Abfagedaten [statement=" + statement + ", index=" + index
+        return "AbfageKey [statement=" + statement + ", index=" + index
                 + ", parameter=" + parameter;
     }
 

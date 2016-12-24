@@ -31,7 +31,10 @@ public class AbfrageRepository {
 
     public void read(AbfrageReader reader) throws IOException {
         while (reader.hasData()) {
-            this.put(reader.read());
+            AbfrageDaten daten = reader.read();
+            if (daten != null) {
+                this.put(daten);
+            }
         }
     }
 

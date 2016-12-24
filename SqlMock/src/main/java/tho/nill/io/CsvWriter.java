@@ -7,6 +7,7 @@ import java.sql.SQLException;
 import java.util.List;
 
 import tho.nill.sqlmock.AbfrageDaten;
+import tho.nill.sqlmock.AbfrageErgebnis;
 import tho.nill.sqlmock.AbfrageKey;
 import tho.nill.sqlmock.AbfrageParameter;
 
@@ -21,23 +22,42 @@ public class CsvWriter implements AbfrageWriter {
     @Override
     public void write(AbfrageDaten daten) throws IOException, SQLException {
         writeAbfrageKey(daten.getKey());
+        writeAbfrageErgebnis(daten.getErgebnis());
+    }
+
+    protected void writeAbfrageErgebnis(AbfrageErgebnis daten)
+            throws IOException, SQLException {
         writeMetaData(daten.getMetaData());
-        writeDaten(daten.getDaten());
+        write("DatenList");
+        List<Object[][]> mehrDaten = daten.getDatenListe();
+        write(mehrDaten.size());
+        for(Object[][] d : mehrDaten) {
+            writeDaten(d);
+        }
+        write("Function");
+        write(daten.getFunktion());
+        writeParameter("ReturnParameter", daten.getResultParameter());
+        write("ReturnedInt");
+        write(daten.getIntResult());
+        write("ReturnedBoolean");
+        write((daten.getBooleanResult()) ? "1" : "0");
     }
 
     private void writeAbfrageKey(AbfrageKey key) throws IOException {
         write("Abfrage");
         write(key.getStatement());
         write(key.getIndex());
-        writeParameter(key.getParameter());
+        writeParameter("Parameter", key.getParameter());
 
     }
 
-    private void writeParameter(List<AbfrageParameter> parameter)
+    private void writeParameter(String name, List<AbfrageParameter> parameter)
             throws IOException {
-        write("Parameter");
+        write(name);
         write(parameter.size());
         for (AbfrageParameter p : parameter) {
+            write(p.getIndex());
+            write(p.getName());
             write(p.getValue());
         }
 
@@ -72,8 +92,7 @@ public class CsvWriter implements AbfrageWriter {
     }
 
     private void write(Object object) throws IOException {
-        write(writer, object.toString(), '|');
-    }
+        write(writer, object.toString(), '|');    }
 
     public static void write(Writer writer, String text, char stop)
             throws IOException {

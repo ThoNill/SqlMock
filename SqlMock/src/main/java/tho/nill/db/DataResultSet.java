@@ -249,11 +249,6 @@ public class DataResultSet implements ResultSet {
     }
 
     @Override
-    public Date getDate(String columnLabel) throws SQLException {
-        return getDate(findColumn(columnLabel));
-    }
-
-    @Override
     public Date getDate(int columnIndex, Calendar cal) throws SQLException {
         return Date.valueOf(getString(columnIndex));
 
@@ -262,6 +257,11 @@ public class DataResultSet implements ResultSet {
     @Override
     public Date getDate(String columnLabel, Calendar cal) throws SQLException {
         return getDate(findColumn(columnLabel), cal);
+    }
+
+    @Override
+    public Date getDate(String columnLabel) throws SQLException {
+        return getDate(findColumn(columnLabel));
     }
 
     @Override
@@ -436,7 +436,6 @@ public class DataResultSet implements ResultSet {
 
     @Override
     public Statement getStatement() throws SQLException {
-        // TODO Auto-generated method stub
         return null;
     }
 
