@@ -7,6 +7,7 @@ import static org.junit.Assert.fail;
 
 import java.sql.Connection;
 import java.sql.DriverManager;
+import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
@@ -27,7 +28,6 @@ import tho.nill.io.AbfrageRepository;
 public class H2Tests {
     private static final Logger LOG = Logger.getLogger(H2Tests.class);
 
-
     @Test
     public void datenbankConnectinDa() {
         try {
@@ -35,10 +35,10 @@ public class H2Tests {
             Connection conn = DriverManager.getConnection("jdbc:h2:mem:");
             conn.close();
         } catch (ClassNotFoundException e) {
-            LOG.error("Unerwartete Ausnahme {}",e);
+            LOG.error("Unerwartete Ausnahme {}", e);
             fail("Unerwartete Ausnahme");
         } catch (SQLException e) {
-            LOG.error("Unerwartete Ausnahme {}",e);
+            LOG.error("Unerwartete Ausnahme {}", e);
             fail("Unerwartete Ausnahme");
         }
     }
@@ -68,7 +68,7 @@ public class H2Tests {
             result.close();
             assertTrue(result.isClosed());
         } catch (SQLException e) {
-            LOG.error("Unerwartete Ausnahme {}",e);
+            LOG.error("Unerwartete Ausnahme {}", e);
             fail("Unerwartete Ausnahme");
         }
     }
@@ -94,7 +94,7 @@ public class H2Tests {
             basis.saveResultSet(result);
             result.close();
             statement.close();
-            
+
             ResultSet lookupResult = basis.lookupResultSet();
 
             assertTrue(lookupResult.next());
@@ -103,10 +103,10 @@ public class H2Tests {
 
             con.close();
         } catch (ClassNotFoundException e) {
-            LOG.error("Unerwartete Ausnahme {}",e);
+            LOG.error("Unerwartete Ausnahme {}", e);
             fail("Unerwartete Ausnahme");
         } catch (SQLException e) {
-            LOG.error("Unerwartete Ausnahme {}",e);
+            LOG.error("Unerwartete Ausnahme {}", e);
             fail("Unerwartete Ausnahme");
         }
     }
@@ -120,8 +120,8 @@ public class H2Tests {
     }
 
     private void createTestTable(Connection con) throws SQLException {
-        update(con,"DROP ALL OBJECTS");
-        update(con,"SET COLLATION GERMAN STRENGTH SECONDARY");
+        update(con, "DROP ALL OBJECTS");
+        update(con, "SET COLLATION GERMAN STRENGTH SECONDARY");
         update(con, "create table kunde ( vorname char, name char) ");
 
     }
@@ -133,59 +133,81 @@ public class H2Tests {
         return erg;
     }
 
-    
-    @Test
-    public void datenbankAbfrageSammeln() {
+    public void sammeln(SqlAktion aktion,String testFileName) {
         try {
-            
+
             Class.forName("org.h2.Driver");
             Connection con = DriverManager.getConnection("jdbc:h2:mem:");
-            
 
             createTestTable(con);
             insertTestData(con, new String[][] { { "Carl Friedrich", "Gauﬂ" } });
             insertTestData(con, new String[][] { { "Emmy", "Noether" } });
             insertTestData(con, new String[][] { { "Emil", "Artin" } });
             insertTestData(con, new String[][] { { "Leonhard", "Euler" } });
-            
-            SammlerConnection.setDefaultConfiguration(new AbfrageConfiguration("testFile"));
+
+            SammlerConnection.setDefaultConfiguration(new AbfrageConfiguration(
+                    testFileName, true));
             SammlerConnection sammler = new SammlerConnection(con);
-            Statement stmt = sammler.createStatement();
-
-            String stmtString = "select * from kunde order by vorname asc";
-            
-            ResultSet result = stmt.executeQuery(stmtString);
-            if(result.next()) {
-                assertEquals("Carl Friedrich", result.getString(1));
-            }
-            result.close();
+            aktion.perform(sammler);
             sammler.close();
-        } catch (Exception e) {
-            LOG.error("Unerwartete Ausnahme {}",e);
-            fail("Unerwartete Ausnahme");
-        } 
-    }
-    @Test
-    public void datenbankAbfrageAusgeben() {
-        try {
-            
-            AusgabeConnection.setDefaultConfiguration(new AbfrageConfiguration("testFile"));
-            AusgabeConnection sammler = new AusgabeConnection();
-            Statement stmt = sammler.createStatement();
 
-            String stmtString = "select * from kunde order by vorname asc";
-          
-            ResultSet result = stmt.executeQuery(stmtString);
-            if(result.next()) {
-               assertEquals("Carl Friedrich", result.getString(1));
-            }
-            result.close();
-            sammler.close();
+            AusgabeConnection.setDefaultConfiguration(new AbfrageConfiguration(
+                    testFileName));
+            AusgabeConnection ausgabe = new AusgabeConnection();
+
+            aktion.perform(ausgabe);
+
+            ausgabe.close();
+
         } catch (Exception e) {
             e.printStackTrace();
-            LOG.error("Unerwartete Ausnahme {}",e);
+            LOG.error("Unerwartete Ausnahme {}", e);
             fail("Unerwartete Ausnahme");
-        } 
+        }
+    }
+
+    class CheckStatement implements SqlAktion {
+
+        public void perform(Connection con) throws SQLException {
+            Statement stmt = con.createStatement();
+
+            String stmtString = "select * from kunde order by vorname asc";
+
+            ResultSet result = stmt.executeQuery(stmtString);
+            if (result.next()) {
+                assertEquals("Carl Friedrich", result.getString(1));
+            } else {
+                fail("Abfrage muss ein Ergebnis liefern");
+            }
+            result.close();
+        }
+    };
+
+    @Test
+    public void statement() {
+        sammeln(new CheckStatement(),"testFile1");
+    }
+
+    class CheckPreparedStatement implements SqlAktion {
+
+        public void perform(Connection con) throws SQLException {
+
+            String stmtString = "select * from kunde where name = ? ";
+            PreparedStatement stmt = con.prepareStatement(stmtString);
+            stmt.setString(1, "Artin");
+            ResultSet result = stmt.executeQuery();
+            if (result.next()) {
+                assertEquals("Emil", result.getString(1));
+            } else {
+                fail("Abfrage muss ein Ergebnis liefern");
+            }
+            result.close();
+        }
+    }
+
+    @Test
+    public void preparedStatement() {
+        sammeln(new CheckPreparedStatement(),"testFile2");
     }
 
 }

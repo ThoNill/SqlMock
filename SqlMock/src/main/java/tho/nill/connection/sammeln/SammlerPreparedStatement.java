@@ -53,7 +53,7 @@ public class SammlerPreparedStatement extends SammlerStatement implements
 
     @Override
     public ResultSet executeQuery() throws SQLException {
-        updateOrInsertWithLookup(getStmtString());
+        updateOrInsert(getStmtString());
         ResultSet result = stmt.executeQuery();
         super.saveResultSet(result);
         result.close();

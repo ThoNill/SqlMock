@@ -18,13 +18,13 @@ public class StatementBasis extends ResultSet2Array {
     private List<AbfrageParameter> parameter;
     private String stmt;
     private boolean neueParameterErzeugen = false;
-    
+
     private String funktion;
     private List<AbfrageParameter> resultParameter = new ArrayList<>();
     private List<Object[][]> mehrDaten = new ArrayList<>();
     private int intResult;
     private boolean booleanResult;
-    
+
     private AbfrageErgebnis aktuellesErgebnis;
 
     public StatementBasis(AbfrageRepository repository,
@@ -55,23 +55,18 @@ public class StatementBasis extends ResultSet2Array {
     }
 
     public void updateOrInsertWithLookup(String stmt) {
-        boolean isUpdateOrInsert = (stmt.toLowerCase().contains("update") || stmt
-                .toLowerCase().contains("insert"));
-        if (isUpdateOrInsert) {
-            umgebung.updateOrInsert();
-        }
+        updateOrInsert(stmt);
         lookupErgebnis(stmt);
     }
 
     public void updateOrInsert(String stmt) {
-        boolean isUpdateOrInsert = !stmt.toLowerCase().contains("select") ;
+        boolean isUpdateOrInsert = !stmt.toLowerCase().contains("select");
         if (isUpdateOrInsert) {
             umgebung.updateOrInsert();
         }
-        
+
     }
 
-    
     public void setParameter(int parameterIndex, Object value) {
         eventuellNeueParameterErzeugen();
         getParameter().add(new AbfrageParameter(parameterIndex, value));
@@ -91,7 +86,8 @@ public class StatementBasis extends ResultSet2Array {
 
     public ResultSet lookupResultSet(String stmt) {
         lookupErgebnis(stmt);
-        return new DataResultSet(aktuellesErgebnis.getDaten(), aktuellesErgebnis.getMetaData());
+        return new DataResultSet(aktuellesErgebnis.getDaten(),
+                aktuellesErgebnis.getMetaData());
     }
 
     protected void lookupErgebnis(String stmt) {
@@ -116,7 +112,7 @@ public class StatementBasis extends ResultSet2Array {
     }
 
     public void saveResultSet(ResultSet result) throws SQLException {
-        this.saveResultSet(result,this.stmt);
+        this.saveResultSet(result, this.stmt);
     }
 
     private AbfrageDaten createDaten(ResultSet result, String stmt)
@@ -129,27 +125,25 @@ public class StatementBasis extends ResultSet2Array {
         ergebnis.setResultParameter(resultParameter);
         return new AbfrageDaten(createKey(stmt), ergebnis);
     }
-    
-    
-    public <T> T addResultParameter(int parameterIndex,Object value,Class<T> iface) {
+
+    public <T> T addResultParameter(int parameterIndex, Object value,
+            Class<T> iface) {
         resultParameter.add(new AbfrageParameter(parameterIndex, value));
         return iface.cast(value);
     }
-    
-    public <T> T addResultParameter(String name,Object value,Class<T> iface) {
+
+    public <T> T addResultParameter(String name, Object value, Class<T> iface) {
         resultParameter.add(new AbfrageParameter(name, value));
         return iface.cast(value);
     }
-    
-    
-    
-    public int setIntResult(String function,int result) {
+
+    public int setIntResult(String function, int result) {
         this.intResult = result;
         this.funktion = function;
         return this.intResult;
     }
-    
-    public boolean setBooleanResult(String function,boolean result) {
+
+    public boolean setBooleanResult(String function, boolean result) {
         this.booleanResult = result;
         this.funktion = function;
         return this.booleanResult;
@@ -174,6 +168,7 @@ public class StatementBasis extends ResultSet2Array {
     public boolean getBooleanResult() {
         return aktuellesErgebnis.getBooleanResult();
     }
+
     public boolean hasMoreDaten() {
         return aktuellesErgebnis.hasMoreDaten();
     }

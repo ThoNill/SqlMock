@@ -65,26 +65,10 @@ public class SammlerConnection implements Connection {
      //   prepareRepository();
     }
 
-    private void prepareRepository() {
-        File datei = new File(configuration.getFileName());
-        if (datei.isFile() && datei.canRead()) {
-            try {
-                Reader input = new FileReader(datei);
-                CsvReader reader = new CsvReader(input);
-                repository.read(reader);
-                input.close();
-            } catch (IOException e) {
-                LOG.error("Unerwartete Ausnahme {}",e);
-                throw new SqlMockException("Ausnahme beim Lesen von Datei "
-                        + datei.getAbsolutePath(), e);
-            }
-        }
-
-    }
-
+ 
     private void writeRepository() {
         File datei = new File(configuration.getFileName());
-        if (!datei.exists()) {
+        if (!datei.exists() || configuration.isOverwrite()) {
             try {
                 Writer output = new FileWriter(datei);
                 CsvWriter writer = new CsvWriter(output);
