@@ -78,9 +78,14 @@ public class CsvReader implements AbfrageReader {
             try {
                 metaData.setColumnCount(spaltenAnzahl);
                 for (int i = 1; i <= spaltenAnzahl; i++) {
+                    metaData.setColumnName(i, readString());
                     metaData.setColumnLabel(i, readString());
+                    metaData.setColumnTypeName(i, readString());
+                    metaData.setColumnType(i, readInt());
                 }
 
+                
+                
             } catch (SQLException e) {
                 throw new SqlMockException(
                         "Unerwartete SQL Exception bei Erzeugen eines RowSetMetaDataImpl",

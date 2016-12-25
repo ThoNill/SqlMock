@@ -80,8 +80,24 @@ public class CsvWriter implements AbfrageWriter {
             int spaltenAnzahl = metaData.getColumnCount();
             write(spaltenAnzahl);
             for (int i = 1; i <= spaltenAnzahl; i++) {
+                try {
+                    write(metaData.getColumnName(i));
+                } catch (Exception e) {
+                    write("");
+                }
                 write(metaData.getColumnLabel(i));
-            }
+                try {
+                    write(metaData.getColumnTypeName(i));
+                } catch (Exception e) {
+                    write("");
+                }
+                try {
+                write(metaData.getColumnType(i));
+                } catch (Exception e) {
+                    write("0");
+                }
+
+                }
         }
     }
 
