@@ -22,7 +22,7 @@ import tho.nill.connection.sammeln.SammlerConnection;
 import tho.nill.db.AbfrageUmgebung;
 import tho.nill.db.DataResultSet;
 import tho.nill.db.StatementBasis;
-import tho.nill.sqlmock.AbfrageRepository;
+import tho.nill.io.AbfrageRepository;
 
 public class H2Tests {
     private static final Logger LOG = Logger.getLogger(H2Tests.class);
@@ -182,6 +182,7 @@ public class H2Tests {
             result.close();
             sammler.close();
         } catch (Exception e) {
+            e.printStackTrace();
             LOG.error("Unerwartete Ausnahme {}",e);
             fail("Unerwartete Ausnahme");
         } 

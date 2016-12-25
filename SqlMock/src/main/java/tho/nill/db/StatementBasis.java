@@ -6,11 +6,11 @@ import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 
+import tho.nill.io.AbfrageRepository;
 import tho.nill.sqlmock.AbfrageDaten;
 import tho.nill.sqlmock.AbfrageErgebnis;
 import tho.nill.sqlmock.AbfrageKey;
 import tho.nill.sqlmock.AbfrageParameter;
-import tho.nill.sqlmock.AbfrageRepository;
 
 public class StatementBasis extends ResultSet2Array {
     private AbfrageRepository repository;

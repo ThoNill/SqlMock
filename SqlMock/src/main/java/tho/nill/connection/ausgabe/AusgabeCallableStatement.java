@@ -23,7 +23,7 @@ import java.util.Calendar;
 import java.util.Map;
 
 import tho.nill.db.AbfrageUmgebung;
-import tho.nill.sqlmock.AbfrageRepository;
+import tho.nill.io.AbfrageRepository;
 
 public class AusgabeCallableStatement extends AusgabePreparedStatement implements
         CallableStatement {

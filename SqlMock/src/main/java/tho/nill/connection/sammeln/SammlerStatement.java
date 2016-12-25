@@ -8,7 +8,7 @@ import java.sql.Statement;
 
 import tho.nill.db.AbfrageUmgebung;
 import tho.nill.db.StatementBasis;
-import tho.nill.sqlmock.AbfrageRepository;
+import tho.nill.io.AbfrageRepository;
 
 public class SammlerStatement extends StatementBasis implements Statement {
     private Statement stmt;

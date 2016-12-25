@@ -22,6 +22,8 @@ public class CsvReader implements AbfrageReader {
 
     private Reader reader;
     private boolean hasData;
+    private boolean mitNl = false;
+    private char gelesenesZeichen;
 
     public CsvReader(Reader reader) {
         super();
@@ -42,6 +44,7 @@ public class CsvReader implements AbfrageReader {
 
     protected AbfrageErgebnis readAbfrageErgebnis() throws IOException {
         ResultSetMetaData metaData = readMetaData();
+        nl();
         prüfeKennung("DatenList");
         int datenAnzahl = readInt();
         Object daten[][] = readData();
@@ -51,18 +54,22 @@ public class CsvReader implements AbfrageReader {
             daten = readData();
             ergebnis.addMehrDaten(i, daten);
         }
+        nl();
         prüfeKennung("Function");
         ergebnis.setFunktion(readString());
         List<AbfrageParameter> parameter = readParameterList("ReturnParameter");
         ergebnis.setResultParameter(parameter);
+        nl();
         prüfeKennung("ReturnedInt");
         ergebnis.setIntResult(readInt());
+        nl();
         prüfeKennung("ReturnedBoolean");
         ergebnis.setBooleanResult(readInt() == 1);
         return ergebnis;
     }
 
     private ResultSetMetaData readMetaData() throws IOException {
+        nl();
         prüfeKennung("Meta");
         int spaltenAnzahl = readInt();
         RowSetMetaDataImpl metaData = null;
@@ -76,13 +83,15 @@ public class CsvReader implements AbfrageReader {
 
             } catch (SQLException e) {
                 throw new SqlMockException(
-                        "Unerwartete SQL Exception bei Erzeugen eines RowSetMetaDataImpl",e);
+                        "Unerwartete SQL Exception bei Erzeugen eines RowSetMetaDataImpl",
+                        e);
             }
         }
         return metaData;
     }
 
     private AbfrageKey readAbfrageKey() throws IOException {
+        nl();
         if (prüfeKennung("Abfrage")) {
             String statement = readString().toString();
             int index = readInt();
@@ -96,6 +105,7 @@ public class CsvReader implements AbfrageReader {
     private List<AbfrageParameter> readParameterList(String name)
             throws IOException {
         List<AbfrageParameter> parameter = new ArrayList<>();
+        nl();
         prüfeKennung(name);
         int anzahl = readInt();
         for (int i = 1; i <= anzahl; i++) {
@@ -112,6 +122,7 @@ public class CsvReader implements AbfrageReader {
     }
 
     private Object[][] readData() throws IOException {
+        nl();
         prüfeKennung("Daten");
         int zeileAnzahl = readInt();
         Object[][] daten = null;
@@ -151,38 +162,50 @@ public class CsvReader implements AbfrageReader {
 
     public String readUntil(Reader reader, char stop) throws IOException {
         StringBuilder builder = new StringBuilder();
-        char[] einZeichen = new char[1];
-        int anz = 0;
         char z;
         do {
-            anz = reader.read(einZeichen);
-            if (anz == -1) {
-                hasData = false;
+            z = einZeichenLesen();
+            if (!hasData) {
                 return builder.toString();
             }
-            z = einZeichen[0];
             if (z == '\\') {
-                anz = reader.read(einZeichen);
-                if (anz == -1) {
-                    hasData = false;
-                    return builder.toString();
-                }
-                z = einZeichen[0];
-                if (anz == 1) {
+                z = einZeichenLesen();
+                if (hasData) {
                     builder.append(z);
                 } else {
                     throw new SqlMockException(
-                            "Escapezeichen ohne anschlißendes Zeichen im Stream");
+                            "Escapezeichen ohne anschließendes Zeichen im Stream");
                 }
-            } else {
-                if (anz == 1 && z != stop) {
-                    builder.append(z);
-                }
+            } else if (z != stop) {
+                builder.append(z);
             }
-        } while (anz == 1 && z != stop);
+
+        } while (hasData && z != stop);
 
         return builder.toString();
 
     }
 
+    private void nl() throws IOException {
+        if (!mitNl || !hasData) {
+            mitNl = true;
+            return;
+        }
+        char einZeichen = einZeichenLesen();
+        if (einZeichen != '\n' && hasData) {
+            throw new SqlMockException("Kein Zeileende im Stream");
+        }
+    }
+
+    protected char einZeichenLesen() throws IOException {
+        char[] einZeichen = new char[1];
+        int anz = reader.read(einZeichen);
+        if (anz == -1) {
+            hasData = false;
+        } else {
+            gelesenesZeichen = einZeichen[0];
+            return gelesenesZeichen;
+        }
+        return 0;
+    }
 }

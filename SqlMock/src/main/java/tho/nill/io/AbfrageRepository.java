@@ -1,11 +1,11 @@
-package tho.nill.sqlmock;
+package tho.nill.io;
 
 import java.io.IOException;
 import java.sql.SQLException;
 import java.util.HashMap;
 
-import tho.nill.io.AbfrageReader;
-import tho.nill.io.AbfrageWriter;
+import tho.nill.sqlmock.AbfrageDaten;
+import tho.nill.sqlmock.AbfrageKey;
 
 public class AbfrageRepository {
     private HashMap<AbfrageKey, AbfrageDaten> map;

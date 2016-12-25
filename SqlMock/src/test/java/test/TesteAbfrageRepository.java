@@ -20,13 +20,13 @@ import javax.sql.rowset.RowSetMetaDataImpl;
 import org.apache.log4j.Logger;
 import org.junit.Test;
 
+import tho.nill.io.AbfrageRepository;
 import tho.nill.io.CsvReader;
 import tho.nill.io.CsvWriter;
 import tho.nill.sqlmock.AbfrageDaten;
 import tho.nill.sqlmock.AbfrageErgebnis;
 import tho.nill.sqlmock.AbfrageKey;
 import tho.nill.sqlmock.AbfrageParameter;
-import tho.nill.sqlmock.AbfrageRepository;
 
 public class TesteAbfrageRepository {
     private static final Logger LOG = Logger.getLogger(TesteAbfrageRepository.class);

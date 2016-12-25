@@ -29,9 +29,9 @@ import org.apache.log4j.Logger;
 
 import tho.nill.connection.AbfrageConfiguration;
 import tho.nill.db.AbfrageUmgebung;
+import tho.nill.io.AbfrageRepository;
 import tho.nill.io.CsvReader;
 import tho.nill.io.CsvWriter;
-import tho.nill.sqlmock.AbfrageRepository;
 import tho.nill.sqlmock.SqlMockException;
 
 public class SammlerConnection implements Connection {

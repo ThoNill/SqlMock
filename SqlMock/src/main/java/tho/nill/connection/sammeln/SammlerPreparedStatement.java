@@ -22,7 +22,7 @@ import java.sql.Timestamp;
 import java.util.Calendar;
 
 import tho.nill.db.AbfrageUmgebung;
-import tho.nill.sqlmock.AbfrageRepository;
+import tho.nill.io.AbfrageRepository;
 
 public class SammlerPreparedStatement extends SammlerStatement implements
         PreparedStatement {
