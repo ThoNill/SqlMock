@@ -47,8 +47,8 @@ public class SammlerPreparedStatement extends SammlerStatement implements
 
     @Override
     public boolean execute() throws SQLException {
-        updateOrInsertWithLookup(getStmtString());
-        return stmt.execute();
+        updateOrInsert(getStmtString());
+        return setBooleanResult("execute1",stmt.execute());
     }
 
     @Override
@@ -63,7 +63,7 @@ public class SammlerPreparedStatement extends SammlerStatement implements
     @Override
     public int executeUpdate() throws SQLException {
         updateOrInsertWithLookup(getStmtString());
-        return stmt.executeUpdate();
+        return setIntResult("update",stmt.executeUpdate());
     }
 
     @Override

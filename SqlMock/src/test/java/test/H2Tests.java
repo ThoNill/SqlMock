@@ -210,4 +210,31 @@ public class H2Tests {
         sammeln(new CheckPreparedStatement(),"testFile2");
     }
 
+    
+    class CheckExecuteStatement implements SqlAktion {
+
+        public void perform(Connection con) throws SQLException {
+
+            String stmtString = "select * from kunde where name = ? ";
+            PreparedStatement stmt = con.prepareStatement(stmtString);
+            stmt.setString(1, "Artin");
+            if(stmt.execute()) {
+            ResultSet result = stmt.getResultSet();
+            if (result.next()) {
+                assertEquals("Emil", result.getString(1));
+            } else {
+                fail("Abfrage muss ein Ergebnis liefern");
+            }
+            result.close();
+            } else {
+                fail("Execute gibt falsch zurück");
+            }
+        }
+    }
+
+    @Test
+    public void executeStatement() {
+        sammeln(new CheckExecuteStatement(),"testFile3");
+    }
+
 }
