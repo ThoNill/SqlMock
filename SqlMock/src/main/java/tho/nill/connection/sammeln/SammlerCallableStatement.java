@@ -20,6 +20,8 @@ import java.sql.Timestamp;
 import java.util.Calendar;
 import java.util.Map;
 
+import javax.swing.text.StyledEditorKit.BoldAction;
+
 import tho.nill.db.AbfrageUmgebung;
 import tho.nill.io.AbfrageRepository;
 
@@ -52,12 +54,13 @@ public class SammlerCallableStatement extends SammlerPreparedStatement implement
 
     @Override
     public BigDecimal getBigDecimal(int parameterIndex) throws SQLException {
-        return stmt.getBigDecimal(parameterIndex);
+        BigDecimal value = stmt.getBigDecimal(parameterIndex);
+        return addResultParameter(parameterIndex, value,BigDecimal.class);
     }
 
     @Override
     public BigDecimal getBigDecimal(String parameterName) throws SQLException {
-        return stmt.getBigDecimal(parameterName);
+        return addResultParameter(parameterName,stmt.getBigDecimal(parameterName),BigDecimal.class);
     }
 
     @Override
@@ -72,22 +75,22 @@ public class SammlerCallableStatement extends SammlerPreparedStatement implement
 
     @Override
     public boolean getBoolean(int parameterIndex) throws SQLException {
-        return stmt.getBoolean(parameterIndex);
+        return addResultParameter(parameterIndex,stmt.getBoolean(parameterIndex),Boolean.class);
     }
 
     @Override
     public boolean getBoolean(String parameterName) throws SQLException {
-        return stmt.getBoolean(parameterName);
+        return addResultParameter(parameterName,stmt.getBoolean(parameterName),Boolean.class);
     }
 
     @Override
     public byte getByte(int parameterIndex) throws SQLException {
-        return stmt.getByte(parameterIndex);
+        return addResultParameter(parameterIndex,stmt.getByte(parameterIndex),Byte.class);
     }
 
     @Override
     public byte getByte(String parameterName) throws SQLException {
-        return stmt.getByte(parameterName);
+        return addResultParameter(parameterName,stmt.getByte(parameterName),Byte.class);
     }
 
     @Override
@@ -122,32 +125,32 @@ public class SammlerCallableStatement extends SammlerPreparedStatement implement
 
     @Override
     public Date getDate(int parameterIndex, Calendar cal) throws SQLException {
-        return stmt.getDate(parameterIndex, cal);
+        return addResultParameter(parameterIndex,stmt.getDate(parameterIndex, cal),Date.class);
     }
 
     @Override
     public Date getDate(int parameterIndex) throws SQLException {
-        return stmt.getDate(parameterIndex);
+        return addResultParameter(parameterIndex,stmt.getDate(parameterIndex),Date.class);
     }
 
     @Override
     public Date getDate(String parameterName, Calendar cal) throws SQLException {
-        return stmt.getDate(parameterName, cal);
+        return addResultParameter(parameterName,stmt.getDate(parameterName, cal),Date.class);
     }
 
     @Override
     public Date getDate(String parameterName) throws SQLException {
-        return stmt.getDate(parameterName);
+        return addResultParameter(parameterName, stmt.getDate(parameterName),Date.class);
     }
 
     @Override
     public double getDouble(int parameterIndex) throws SQLException {
-        return stmt.getDouble(parameterIndex);
+        return addResultParameter(parameterIndex,stmt.getDouble(parameterIndex),Double.class);
     }
 
     @Override
     public double getDouble(String parameterName) throws SQLException {
-        return stmt.getDouble(parameterName);
+        return addResultParameter(parameterName, stmt.getDouble(parameterName),Double.class);
     }
 
     @Override
@@ -162,12 +165,12 @@ public class SammlerCallableStatement extends SammlerPreparedStatement implement
 
     @Override
     public float getFloat(int parameterIndex) throws SQLException {
-        return stmt.getFloat(parameterIndex);
+        return addResultParameter(parameterIndex,stmt.getFloat(parameterIndex),Float.class);
     }
 
     @Override
     public float getFloat(String parameterName) throws SQLException {
-        return stmt.getFloat(parameterName);
+        return addResultParameter(parameterName, stmt.getFloat(parameterName),Float.class);
     }
 
     @Override
@@ -177,22 +180,22 @@ public class SammlerCallableStatement extends SammlerPreparedStatement implement
 
     @Override
     public int getInt(int parameterIndex) throws SQLException {
-        return stmt.getInt(parameterIndex);
+        return addResultParameter(parameterIndex,stmt.getInt(parameterIndex),Integer.class);
     }
 
     @Override
     public int getInt(String parameterName) throws SQLException {
-        return stmt.getInt(parameterName);
+        return addResultParameter(parameterName, stmt.getInt(parameterName),Integer.class);
     }
 
     @Override
     public long getLong(int parameterIndex) throws SQLException {
-        return stmt.getLong(parameterIndex);
+        return addResultParameter(parameterIndex,stmt.getLong(parameterIndex),Long.class);
     }
 
     @Override
     public long getLong(String parameterName) throws SQLException {
-        return stmt.getLong(parameterName);
+        return addResultParameter(parameterName, stmt.getLong(parameterName),Long.class);
     }
 
     @Override
@@ -228,7 +231,7 @@ public class SammlerCallableStatement extends SammlerPreparedStatement implement
     @Override
     public <T> T getObject(int parameterIndex, Class<T> type)
             throws SQLException {
-        return stmt.getObject(parameterIndex, type);
+        return addResultParameter(parameterIndex,stmt.getObject(parameterIndex, type),type);
     }
 
     @Override
@@ -239,13 +242,13 @@ public class SammlerCallableStatement extends SammlerPreparedStatement implement
 
     @Override
     public Object getObject(int parameterIndex) throws SQLException {
-        return stmt.getObject(parameterIndex);
+        return addResultParameter(parameterIndex,stmt.getObject(parameterIndex),Object.class);
     }
 
     @Override
     public <T> T getObject(String parameterName, Class<T> type)
             throws SQLException {
-        return stmt.getObject(parameterName, type);
+        return addResultParameter(parameterName, stmt.getObject(parameterName, type),type);
     }
 
     @Override
@@ -256,7 +259,7 @@ public class SammlerCallableStatement extends SammlerPreparedStatement implement
 
     @Override
     public Object getObject(String parameterName) throws SQLException {
-        return stmt.getObject(parameterName);
+        return addResultParameter(parameterName, stmt.getObject(parameterName),Object.class);
     }
 
     @Override
@@ -291,64 +294,64 @@ public class SammlerCallableStatement extends SammlerPreparedStatement implement
 
     @Override
     public short getShort(int parameterIndex) throws SQLException {
-        return stmt.getShort(parameterIndex);
+        return addResultParameter(parameterIndex,stmt.getShort(parameterIndex),Short.class);
     }
 
     @Override
     public short getShort(String parameterName) throws SQLException {
-        return stmt.getShort(parameterName);
+        return addResultParameter(parameterName, stmt.getShort(parameterName),Short.class);
     }
 
     @Override
     public String getString(int parameterIndex) throws SQLException {
-        return stmt.getString(parameterIndex);
+        return addResultParameter(parameterIndex,stmt.getString(parameterIndex),String.class);
     }
 
     @Override
     public String getString(String parameterName) throws SQLException {
-        return stmt.getString(parameterName);
+        return addResultParameter(parameterName, stmt.getString(parameterName),String.class);
     }
 
     @Override
     public Time getTime(int parameterIndex, Calendar cal) throws SQLException {
-        return stmt.getTime(parameterIndex, cal);
+        return addResultParameter(parameterIndex,stmt.getTime(parameterIndex, cal),Time.class);
     }
 
     @Override
     public Time getTime(int parameterIndex) throws SQLException {
-        return stmt.getTime(parameterIndex);
+        return addResultParameter(parameterIndex,stmt.getTime(parameterIndex),Time.class);
     }
 
     @Override
     public Time getTime(String parameterName, Calendar cal) throws SQLException {
-        return stmt.getTime(parameterName, cal);
+        return addResultParameter(parameterName, stmt.getTime(parameterName, cal),Time.class);
     }
 
     @Override
     public Time getTime(String parameterName) throws SQLException {
-        return stmt.getTime(parameterName);
+        return addResultParameter(parameterName, stmt.getTime(parameterName),Time.class);
     }
 
     @Override
     public Timestamp getTimestamp(int parameterIndex, Calendar cal)
             throws SQLException {
-        return stmt.getTimestamp(parameterIndex, cal);
+        return addResultParameter(parameterIndex,stmt.getTimestamp(parameterIndex, cal),Timestamp.class);
     }
 
     @Override
     public Timestamp getTimestamp(int parameterIndex) throws SQLException {
-        return stmt.getTimestamp(parameterIndex);
+        return addResultParameter(parameterIndex,stmt.getTimestamp(parameterIndex),Timestamp.class);
     }
 
     @Override
     public Timestamp getTimestamp(String parameterName, Calendar cal)
             throws SQLException {
-        return stmt.getTimestamp(parameterName, cal);
+        return addResultParameter(parameterName, stmt.getTimestamp(parameterName, cal),Timestamp.class);
     }
 
     @Override
     public Timestamp getTimestamp(String parameterName) throws SQLException {
-        return stmt.getTimestamp(parameterName);
+        return addResultParameter(parameterName, stmt.getTimestamp(parameterName),Timestamp.class);
     }
 
     @Override

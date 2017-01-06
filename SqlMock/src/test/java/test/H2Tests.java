@@ -12,6 +12,7 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
 
+import javax.sql.DataSource;
 import javax.sql.rowset.RowSetMetaDataImpl;
 
 import org.apache.log4j.Logger;
@@ -19,11 +20,15 @@ import org.junit.Test;
 
 import tho.nill.connection.AbfrageConfiguration;
 import tho.nill.connection.ausgabe.AusgabeConnection;
+import tho.nill.connection.ausgabe.AusgabeDataSource;
 import tho.nill.connection.sammeln.SammlerConnection;
+import tho.nill.connection.sammeln.SammlerDataSource;
 import tho.nill.db.AbfrageUmgebung;
 import tho.nill.db.DataResultSet;
 import tho.nill.db.StatementBasis;
 import tho.nill.io.AbfrageRepository;
+
+import org.h2.jdbcx.JdbcConnectionPool;
 
 public class H2Tests {
     private static final Logger LOG = Logger.getLogger(H2Tests.class);
@@ -133,11 +138,89 @@ public class H2Tests {
         return erg;
     }
 
-    public void sammeln(SqlAktion aktion,String testFileName) {
+    public void dieDatenMitEinerDataSourceSammelnUndWiederholen(
+            SqlAktion aktion, String testFileName) {
         try {
+            Class.forName("org.h2.Driver");
+            SammlerDataSource.setDefaultConfiguration(new AbfrageConfiguration(
+                    testFileName, true));
 
+            JdbcConnectionPool cp = JdbcConnectionPool.create("jdbc:h2:mem:test",
+                    "sa", "sa");
+            SammlerDataSource dataSource = new SammlerDataSource(cp);
+            dieDatenSammelnUndWiederholen(dataSource, aktion, testFileName);
+        } catch (ClassNotFoundException e) {
+            e.printStackTrace();
+            LOG.error("Unerwartete Ausnahme {}", e);
+            fail("Unerwartete Ausnahme");
+
+        }
+    }
+
+    public void dieDatenSammelnUndWiederholen(SammlerDataSource dataSource, SqlAktion aktion,
+            String testFileName) {
+
+        try {
+            testdatenErzeugen(dataSource);
+
+            Connection sammler = dataSource.getConnection();
+            aktion.perform(sammler);
+            sammler.close();
+            
+            dataSource.closeRepository();
+
+            
+            AusgabeDataSource.setDefaultConfiguration(new AbfrageConfiguration(
+                    testFileName));
+            AusgabeDataSource ausgabeDataSource = new AusgabeDataSource();
+            
+            testdatenErzeugen(ausgabeDataSource);
+   
+            Connection ausgabe = ausgabeDataSource.getConnection();
+
+            aktion.perform(ausgabe);
+
+            ausgabe.close();
+
+        } catch (Exception e) {
+            e.printStackTrace();
+            LOG.error("Unerwartete Ausnahme {}", e);
+            fail("Unerwartete Ausnahme");
+        }
+    }
+
+    protected void testdatenErzeugen(DataSource dataSource)
+            throws SQLException {
+        Connection con = dataSource.getConnection();
+        createTestTable(con);
+        insertTestData(con, new String[][] { { "Carl Friedrich", "Gauß" } });
+        insertTestData(con, new String[][] { { "Emmy", "Noether" } });
+        insertTestData(con, new String[][] { { "Emil", "Artin" } });
+        insertTestData(con, new String[][] { { "Leonhard", "Euler" } });
+        con.close();
+    }
+
+    
+    
+    public void dieDatenMitEinemDriverManagerSammelnUndWiederholen(
+            SqlAktion aktion, String testFileName) {
+        try {
             Class.forName("org.h2.Driver");
             Connection con = DriverManager.getConnection("jdbc:h2:mem:");
+            dieDatenSammelnUndWiederholen(con, aktion, testFileName);
+            con.close();
+        } catch (ClassNotFoundException | SQLException e) {
+            e.printStackTrace();
+            LOG.error("Unerwartete Ausnahme {}", e);
+            fail("Unerwartete Ausnahme");
+
+        }
+    }
+
+    public void dieDatenSammelnUndWiederholen(Connection con, SqlAktion aktion,
+            String testFileName) {
+
+        try {
 
             createTestTable(con);
             insertTestData(con, new String[][] { { "Carl Friedrich", "Gauß" } });
@@ -185,7 +268,8 @@ public class H2Tests {
 
     @Test
     public void statement() {
-        sammeln(new CheckStatement(),"testFile1");
+        dieDatenMitEinemDriverManagerSammelnUndWiederholen(
+                new CheckStatement(), "testFile1");
     }
 
     class CheckPreparedStatement implements SqlAktion {
@@ -207,10 +291,10 @@ public class H2Tests {
 
     @Test
     public void preparedStatement() {
-        sammeln(new CheckPreparedStatement(),"testFile2");
+        dieDatenMitEinemDriverManagerSammelnUndWiederholen(
+                new CheckPreparedStatement(), "testFile2");
     }
 
-    
     class CheckExecuteStatement implements SqlAktion {
 
         public void perform(Connection con) throws SQLException {
@@ -218,14 +302,14 @@ public class H2Tests {
             String stmtString = "select * from kunde where name = ? ";
             PreparedStatement stmt = con.prepareStatement(stmtString);
             stmt.setString(1, "Artin");
-            if(stmt.execute()) {
-            ResultSet result = stmt.getResultSet();
-            if (result.next()) {
-                assertEquals("Emil", result.getString(1));
-            } else {
-                fail("Abfrage muss ein Ergebnis liefern");
-            }
-            result.close();
+            if (stmt.execute()) {
+                ResultSet result = stmt.getResultSet();
+                if (result.next()) {
+                    assertEquals("Emil", result.getString(1));
+                } else {
+                    fail("Abfrage muss ein Ergebnis liefern");
+                }
+                result.close();
             } else {
                 fail("Execute gibt falsch zurück");
             }
@@ -234,7 +318,14 @@ public class H2Tests {
 
     @Test
     public void executeStatement() {
-        sammeln(new CheckExecuteStatement(),"testFile3");
+        dieDatenMitEinemDriverManagerSammelnUndWiederholen(
+                new CheckExecuteStatement(), "testFile3");
+    }
+
+    @Test
+    public void executeStatementMitEinerDataSource() {
+        dieDatenMitEinerDataSourceSammelnUndWiederholen(
+                new CheckExecuteStatement(), "testFile4");
     }
 
 }

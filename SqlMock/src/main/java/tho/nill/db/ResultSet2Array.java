@@ -12,25 +12,30 @@ public class ResultSet2Array {
     public ResultSetMetaData convertMetaData(ResultSet result)
             throws SQLException {
         RowSetMetaDataImpl metaData = new RowSetMetaDataImpl();
-        ResultSetMetaData rMetaData = result.getMetaData();
-        int spaltenAnzahl = rMetaData.getColumnCount();
-        metaData.setColumnCount(spaltenAnzahl);
-        for (int i = 1; i <= spaltenAnzahl; i++) {
-            metaData.setColumnLabel(i, rMetaData.getColumnLabel(i));
+        if (result != null) {
+            ResultSetMetaData rMetaData = result.getMetaData();
+            int spaltenAnzahl = rMetaData.getColumnCount();
+            metaData.setColumnCount(spaltenAnzahl);
+            for (int i = 1; i <= spaltenAnzahl; i++) {
+                metaData.setColumnLabel(i, rMetaData.getColumnLabel(i));
+            }
         }
         return metaData;
     }
 
     public Object[][] toData(ResultSet result) throws SQLException {
         ArrayList<Object[]> list = new ArrayList<>();
-        ResultSetMetaData metaData = result.getMetaData();
-        int spaltenAnzahl = metaData.getColumnCount();
-        while (result.next()) {
-            Object[] zeile = new Object[spaltenAnzahl];
-            for (int i = 1; i <= spaltenAnzahl; i++) {
-                zeile[i - 1] = result.getObject(i);
+        int spaltenAnzahl = 0;
+        if (result != null) {
+            ResultSetMetaData metaData = result.getMetaData();
+            spaltenAnzahl = metaData.getColumnCount();
+            while (result.next()) {
+                Object[] zeile = new Object[spaltenAnzahl];
+                for (int i = 1; i <= spaltenAnzahl; i++) {
+                    zeile[i - 1] = result.getObject(i);
+                }
+                list.add(zeile);
             }
-            list.add(zeile);
         }
         return toData(list, spaltenAnzahl);
     }

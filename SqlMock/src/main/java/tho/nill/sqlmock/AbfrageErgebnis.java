@@ -1,10 +1,15 @@
 package tho.nill.sqlmock;
 
+import java.sql.ResultSet;
 import java.sql.ResultSetMetaData;
+import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 
-public class AbfrageErgebnis {
+import tho.nill.db.DataResultSet;
+import tho.nill.db.ResultSet2Array;
+
+public class AbfrageErgebnis extends ResultSet2Array{
 
     private ResultSetMetaData metaData;
     private String funktion;
@@ -14,13 +19,23 @@ public class AbfrageErgebnis {
     private boolean booleanResult;
     private int maxSchonAbgerufen = -1;
 
-    public AbfrageErgebnis(Object[][] daten, ResultSetMetaData metaData) {
+    public AbfrageErgebnis(ResultSet result) throws SQLException {
         super();
+        this.metaData = convertMetaData(result);
+        this.funktion = "Unbekannt";
+        parameter = new ArrayList<>();
+        mehrDaten = new ArrayList<>();
+        mehrDaten.add(toData(result));
+    }
+
+    public AbfrageErgebnis(Object[][] daten, ResultSetMetaData metaData) {
         this.metaData = metaData;
         this.funktion = "Unbekannt";
         parameter = new ArrayList<>();
         mehrDaten = new ArrayList<>();
         mehrDaten.add(daten);
+   
+    
     }
 
     public List<Object[][]> getDatenListe() {
@@ -84,9 +99,24 @@ public class AbfrageErgebnis {
         return mehrDaten;
     }
 
-    public AbfrageParameter getResultParameter(int arg0) {
-        return parameter.get(arg0);
+    public AbfrageParameter getResultParameter(int index) {
+        for(AbfrageParameter p : parameter) {
+            if (index == p.getIndex()) {
+                return p;
+            }
+        }
+        return parameter.get(index);
     }
+    
+    public AbfrageParameter getResultParameter(String name) {
+        for(AbfrageParameter p : parameter) {
+            if (name.equals(p.getName())) {
+                return p;
+            }
+        }
+        return null;
+    }
+
 
     public void addMehrDaten(int index, Object[][] element) {
         mehrDaten.add(index, element);
@@ -116,5 +146,9 @@ public class AbfrageErgebnis {
                 + booleanResult + ", maxSchonAbgerufen=" + maxSchonAbgerufen
                 + "]";
     }
+    
+   public ResultSet createResultSet() {   
+    return new DataResultSet(getDaten(),getMetaData());
+}
 
 }

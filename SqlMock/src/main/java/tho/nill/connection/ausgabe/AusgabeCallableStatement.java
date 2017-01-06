@@ -49,17 +49,17 @@ public class AusgabeCallableStatement extends AusgabePreparedStatement implement
     @Override
     public BigDecimal getBigDecimal(int parameterIndex, int scale)
             throws SQLException {
-        throw new SQLFeatureNotSupportedException("Not implemented");
+        return getResultParameterValue(parameterIndex, BigDecimal.class);
     }
 
     @Override
     public BigDecimal getBigDecimal(int parameterIndex) throws SQLException {
-        throw new SQLFeatureNotSupportedException("Not implemented");
+        return getResultParameterValue(parameterIndex, BigDecimal.class);
     }
 
     @Override
     public BigDecimal getBigDecimal(String parameterName) throws SQLException {
-        throw new SQLFeatureNotSupportedException("Not implemented");
+        return getResultParameterValue(parameterName, BigDecimal.class);
     }
 
     @Override
@@ -74,24 +74,22 @@ public class AusgabeCallableStatement extends AusgabePreparedStatement implement
 
     @Override
     public boolean getBoolean(int parameterIndex) throws SQLException {
-        throw new SQLFeatureNotSupportedException("Not implemented");
+        return getResultParameterValue(parameterIndex, Boolean.class);
     }
 
     @Override
     public boolean getBoolean(String parameterName) throws SQLException {
-        throw new SQLFeatureNotSupportedException("Not implemented");
+        return getResultParameterValue(parameterName, Boolean.class);
     }
 
     @Override
     public byte getByte(int parameterIndex) throws SQLException {
-
-        throw new SQLFeatureNotSupportedException("Not implemented");
+        return getResultParameterValue(parameterIndex, Byte.class);    
     }
 
     @Override
     public byte getByte(String parameterName) throws SQLException {
-
-        throw new SQLFeatureNotSupportedException("Not implemented");
+        return getResultParameterValue(parameterName, Byte.class);  
     }
 
     @Override
@@ -139,31 +137,31 @@ public class AusgabeCallableStatement extends AusgabePreparedStatement implement
     @Override
     public Date getDate(int parameterIndex) throws SQLException {
 
-        throw new SQLFeatureNotSupportedException("Not implemented");
+          return getResultParameterValue(parameterIndex, Date.class);  
     }
 
     @Override
     public Date getDate(String parameterName, Calendar cal) throws SQLException {
 
-        throw new SQLFeatureNotSupportedException("Not implemented");
+          return getResultParameterValue(parameterName, Date.class);  
     }
 
     @Override
     public Date getDate(String parameterName) throws SQLException {
 
-        throw new SQLFeatureNotSupportedException("Not implemented");
+          return getResultParameterValue(parameterName, Date.class);  
     }
 
     @Override
     public double getDouble(int parameterIndex) throws SQLException {
 
-        throw new SQLFeatureNotSupportedException("Not implemented");
+          return getResultParameterValue(parameterIndex, Double.class);  
     }
 
     @Override
     public double getDouble(String parameterName) throws SQLException {
 
-        throw new SQLFeatureNotSupportedException("Not implemented");
+          return getResultParameterValue(parameterName, Double.class);  
     }
 
     @Override
@@ -181,13 +179,13 @@ public class AusgabeCallableStatement extends AusgabePreparedStatement implement
     @Override
     public float getFloat(int parameterIndex) throws SQLException {
 
-        throw new SQLFeatureNotSupportedException("Not implemented");
+          return getResultParameterValue(parameterIndex, Float.class);  
     }
 
     @Override
     public float getFloat(String parameterName) throws SQLException {
 
-        throw new SQLFeatureNotSupportedException("Not implemented");
+          return getResultParameterValue(parameterName, Float.class);  
     }
 
     @Override
@@ -199,25 +197,25 @@ public class AusgabeCallableStatement extends AusgabePreparedStatement implement
     @Override
     public int getInt(int parameterIndex) throws SQLException {
 
-        throw new SQLFeatureNotSupportedException("Not implemented");
+          return getResultParameterValue(parameterIndex, Integer.class);  
     }
 
     @Override
     public int getInt(String parameterName) throws SQLException {
 
-        throw new SQLFeatureNotSupportedException("Not implemented");
+          return getResultParameterValue(parameterName, Integer.class);  
     }
 
     @Override
     public long getLong(int parameterIndex) throws SQLException {
 
-        throw new SQLFeatureNotSupportedException("Not implemented");
+          return getResultParameterValue(parameterIndex, Long.class);  
     }
 
     @Override
     public long getLong(String parameterName) throws SQLException {
 
-        throw new SQLFeatureNotSupportedException("Not implemented");
+          return getResultParameterValue(parameterName, Long.class);  
     }
 
     @Override
@@ -260,40 +258,40 @@ public class AusgabeCallableStatement extends AusgabePreparedStatement implement
     public <T> T getObject(int parameterIndex, Class<T> type)
             throws SQLException {
 
-        throw new SQLFeatureNotSupportedException("Not implemented");
+          return getResultParameterValue(parameterIndex, type);  
     }
 
     @Override
     public Object getObject(int parameterIndex, Map<String, Class<?>> map)
             throws SQLException {
 
-        throw new SQLFeatureNotSupportedException("Not implemented");
+          return getResultParameterValue(parameterIndex, Object.class);  
     }
 
     @Override
     public Object getObject(int parameterIndex) throws SQLException {
 
-        throw new SQLFeatureNotSupportedException("Not implemented");
+          return getResultParameterValue(parameterIndex, Object.class);  
     }
 
     @Override
     public <T> T getObject(String parameterName, Class<T> type)
             throws SQLException {
 
-        throw new SQLFeatureNotSupportedException("Not implemented");
+          return getResultParameterValue(parameterName,type);  
     }
 
     @Override
     public Object getObject(String parameterName, Map<String, Class<?>> map)
             throws SQLException {
 
-        throw new SQLFeatureNotSupportedException("Not implemented");
+          return getResultParameterValue(parameterName, Byte.class);  
     }
 
     @Override
     public Object getObject(String parameterName) throws SQLException {
 
-        throw new SQLFeatureNotSupportedException("Not implemented");
+          return getResultParameterValue(parameterName, Byte.class);  
     }
 
     @Override
@@ -335,75 +333,75 @@ public class AusgabeCallableStatement extends AusgabePreparedStatement implement
     @Override
     public short getShort(int parameterIndex) throws SQLException {
 
-        throw new SQLFeatureNotSupportedException("Not implemented");
+          return getResultParameterValue(parameterIndex, Short.class);  
     }
 
     @Override
     public short getShort(String parameterName) throws SQLException {
 
-        throw new SQLFeatureNotSupportedException("Not implemented");
+        return getResultParameterValue(parameterName, Short.class);
     }
 
     @Override
     public String getString(int parameterIndex) throws SQLException {
 
-        throw new SQLFeatureNotSupportedException("Not implemented");
+          return getResultParameterValue(parameterIndex, String.class);  
     }
 
     @Override
     public String getString(String parameterName) throws SQLException {
 
-        throw new SQLFeatureNotSupportedException("Not implemented");
+          return getResultParameterValue(parameterName, String.class);  
     }
 
     @Override
     public Time getTime(int parameterIndex, Calendar cal) throws SQLException {
 
-        throw new SQLFeatureNotSupportedException("Not implemented");
+          return getResultParameterValue(parameterIndex, Time.class);  
     }
 
     @Override
     public Time getTime(int parameterIndex) throws SQLException {
 
-        throw new SQLFeatureNotSupportedException("Not implemented");
+          return getResultParameterValue(parameterIndex, Time.class);  
     }
 
     @Override
     public Time getTime(String parameterName, Calendar cal) throws SQLException {
 
-        throw new SQLFeatureNotSupportedException("Not implemented");
+          return getResultParameterValue(parameterName, Time.class);  
     }
 
     @Override
     public Time getTime(String parameterName) throws SQLException {
 
-        throw new SQLFeatureNotSupportedException("Not implemented");
+          return getResultParameterValue(parameterName, Time.class);  
     }
 
     @Override
     public Timestamp getTimestamp(int parameterIndex, Calendar cal)
             throws SQLException {
 
-        throw new SQLFeatureNotSupportedException("Not implemented");
+          return getResultParameterValue(parameterIndex, Timestamp.class);  
     }
 
     @Override
     public Timestamp getTimestamp(int parameterIndex) throws SQLException {
 
-        throw new SQLFeatureNotSupportedException("Not implemented");
+          return getResultParameterValue(parameterIndex, Timestamp.class);  
     }
 
     @Override
     public Timestamp getTimestamp(String parameterName, Calendar cal)
             throws SQLException {
 
-        throw new SQLFeatureNotSupportedException("Not implemented");
+          return getResultParameterValue(parameterName, Timestamp.class);  
     }
 
     @Override
     public Timestamp getTimestamp(String parameterName) throws SQLException {
 
-        throw new SQLFeatureNotSupportedException("Not implemented");
+          return getResultParameterValue(parameterName, Timestamp.class);  
     }
 
     @Override

@@ -24,6 +24,8 @@ public class CsvReader implements AbfrageReader {
     private boolean hasData;
     private boolean mitNl = false;
     private char gelesenesZeichen;
+    int posInLine=0;
+    int line=0;
 
     public CsvReader(Reader reader) {
         super();
@@ -47,10 +49,12 @@ public class CsvReader implements AbfrageReader {
         nl();
         prüfeKennung("DatenList");
         int datenAnzahl = readInt();
+        LOG.debug("Lese Daten ");
         Object daten[][] = readData();
         AbfrageErgebnis ergebnis = new AbfrageErgebnis(daten, metaData);
 
         for (int i = 1; i < datenAnzahl; i++) {
+            LOG.debug("Lese Daten für " + i);
             daten = readData();
             ergebnis.addMehrDaten(i, daten);
         }
@@ -139,6 +143,7 @@ public class CsvReader implements AbfrageReader {
                     daten[zeile][spalte] = readString();
                 }
             }
+            
         }
         return daten;
     }
@@ -186,19 +191,25 @@ public class CsvReader implements AbfrageReader {
             }
 
         } while (hasData && z != stop);
-
+        LOG.debug("Gelesen: "+ builder.toString());
         return builder.toString();
 
     }
 
     private void nl() throws IOException {
+    }
+    
+    private void nl1() throws IOException {
         if (!mitNl || !hasData) {
             mitNl = true;
             return;
         }
         char einZeichen = einZeichenLesen();
         if (einZeichen != '\n' && hasData) {
-            throw new SqlMockException("Kein Zeileende im Stream");
+            throw new SqlMockException("Kein Zeileende im Stream Zeile " + line + " Zeichen: " + posInLine);
+        } else {
+            line++;
+            posInLine=0;
         }
     }
 
@@ -208,9 +219,20 @@ public class CsvReader implements AbfrageReader {
         if (anz == -1) {
             hasData = false;
         } else {
+            posInLine++;
             gelesenesZeichen = einZeichen[0];
             return gelesenesZeichen;
         }
         return 0;
     }
+    
+    
+    public List<ReturnValue>  readReturnValues() throws IOException {
+        List<ReturnValue> returnValues = new ArrayList<>();
+        while(hasData) {
+            returnValues.add(new ReturnValue(readUntil(reader, '\n')));
+        }
+        return returnValues;
+    }
+ 
 }

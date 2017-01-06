@@ -1,6 +1,7 @@
 package test;
 
 import static org.junit.Assert.assertArrayEquals;
+
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
@@ -161,7 +162,7 @@ public class TesteAbfrageRepository {
         metaData.setColumnLabel(3, "Drei");
         metaData.setColumnLabel(4, "Vier");
 
-        Object[][] datenArray = null;
+        Object[][] datenArray = { {} };
         readWrite(datenArray, metaData);
 
     }
@@ -174,6 +175,7 @@ public class TesteAbfrageRepository {
         CsvWriter csvWriter = new CsvWriter(writer);
         try {
             csvWriter.write(daten);
+            System.out.println(writer.toString());
             Reader reader = new CharArrayReader(writer.toCharArray());
             CsvReader csvReader = new CsvReader(reader);
             AbfrageDaten neueDaten = csvReader.read();
@@ -196,6 +198,7 @@ public class TesteAbfrageRepository {
                         .getMetaData().getColumnLabel(2));
             }
         } catch (Exception e) {
+            e.printStackTrace();
             LOG.error("Unerwartete Ausnahme {}",e);
             fail("unerwartete Ausnahme");
         }

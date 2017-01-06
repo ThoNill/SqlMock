@@ -26,8 +26,8 @@ public class CsvWriter implements AbfrageWriter {
         writeAbfrageErgebnis(daten.getErgebnis());
     }
 
-    protected void writeAbfrageErgebnis(AbfrageErgebnis daten)
-            throws IOException, SQLException {
+    public void writeAbfrageErgebnis(AbfrageErgebnis daten) throws IOException,
+            SQLException {
         writeMetaData(daten.getMetaData());
         nl();
         write("DatenList");
@@ -80,7 +80,8 @@ public class CsvWriter implements AbfrageWriter {
             int spaltenAnzahl = metaData.getColumnCount();
             write(spaltenAnzahl);
             for (int i = 1; i <= spaltenAnzahl; i++) {
-                try {                    write(metaData.getColumnName(i));
+                try {
+                    write(metaData.getColumnName(i));
                 } catch (Exception e) {
                     write("");
                 }
@@ -91,24 +92,28 @@ public class CsvWriter implements AbfrageWriter {
                     write("");
                 }
                 try {
-                write(metaData.getColumnType(i));
+                    write(metaData.getColumnType(i));
                 } catch (Exception e) {
                     write("0");
                 }
 
-                }
+            }
         }
     }
 
     private void writeDaten(Object[][] daten) throws IOException {
         nl();
         write("Daten");
-        write((daten == null) ? 0 : daten.length);
+        int zeilenAnzahl = (daten == null) ? 0 : daten.length;
+        write(zeilenAnzahl);
         if (daten != null) {
-            write((daten.length > 0) ? daten[0].length : 0);
-            for (int zeile = 0; zeile < daten.length; zeile++) {
-                for (int spalte = 0; spalte < daten[0].length; spalte++) {
-                    write(daten[zeile][spalte]);
+            int spaltenAnzahl = (daten.length > 0) ? daten[0].length : 0;
+            if (zeilenAnzahl > 0) {
+                write(spaltenAnzahl);
+                for (int zeile = 0; zeile < daten.length; zeile++) {
+                    for (int spalte = 0; spalte < daten[0].length; spalte++) {
+                        write(daten[zeile][spalte]);
+                    }
                 }
             }
         }
@@ -132,12 +137,22 @@ public class CsvWriter implements AbfrageWriter {
         writer.append(stop);
 
     }
-
     private void nl() throws IOException {
+    }
+    
+    private void nl1() throws IOException {
         if (mitNl) {
             writer.append('\n');
         } else {
             mitNl = true;
+        }
+    }
+
+    public void write(List<ReturnValue> returnValues) throws IOException {
+        for (ReturnValue v : returnValues) {
+            writer.append(v.getString());
+            writer.append('\n');
+            nl();
         }
     }
 
