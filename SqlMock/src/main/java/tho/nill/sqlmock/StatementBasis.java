@@ -57,12 +57,12 @@ public class StatementBasis  {
         return iface.cast(value);
     }
 
-    public int setIntResult(String function, int result) {
+    public int setIntResult( int result) {
         repository.putReturnValue(Integer.toString(result));
         return result;
     }
 
-    public boolean setBooleanResult(String function, boolean result) {
+    public boolean setBooleanResult(boolean result) {
         repository.putReturnValue((result) ? "1" : "0");
         return result;
     }

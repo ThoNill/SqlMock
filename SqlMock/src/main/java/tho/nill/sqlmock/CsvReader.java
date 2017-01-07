@@ -171,7 +171,9 @@ public class CsvReader implements AbfrageReader {
     public List<ReturnValue>  readReturnValues() throws IOException {
         List<ReturnValue> returnValues = new ArrayList<>();
         while(hasData) {
-            returnValues.add(new ReturnValue(readUntil(reader, '\n')));
+            String name = readUntil(reader, '|');
+            String text = readUntil(reader, '\n');
+            returnValues.add(new ReturnValue(name,text));
         }
         return returnValues;
     }

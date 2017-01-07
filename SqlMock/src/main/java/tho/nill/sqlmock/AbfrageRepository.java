@@ -22,7 +22,8 @@ public class AbfrageRepository {
     }
 
     public void putReturnValue(String text) {
-        ReturnValue v = new ReturnValue(text);
+        StackTraceElement [] elements =  Thread.currentThread().getStackTrace();
+        ReturnValue v = new ReturnValue(elements[3].getMethodName(),text);
         returnValues.add(v);
     }
 

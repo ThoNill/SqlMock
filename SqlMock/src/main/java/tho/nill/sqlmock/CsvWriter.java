@@ -110,6 +110,8 @@ public class CsvWriter implements AbfrageWriter {
     @Override
     public void write(List<ReturnValue> returnValues) throws IOException {
         for (ReturnValue v : returnValues) {
+            writer.append(v.getName());
+            writer.append('|');
             writer.append(v.getString());
             writer.append('\n');
             nl();
