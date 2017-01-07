@@ -178,7 +178,6 @@ public class StoredProcedureTest {
             ps1.setString(1, name);
             rs1[0] = ps1.executeQuery();
             ps2 = con.prepareStatement(SQL2);
-            // ps2.setString(1, name);
             rs2[0] = ps2.executeQuery();
 
             System.out.println("Abfrage ausgeführt");

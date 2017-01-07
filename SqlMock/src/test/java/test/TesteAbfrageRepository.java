@@ -108,7 +108,6 @@ public class TesteAbfrageRepository {
         CsvWriter csvWriter = new CsvWriter(writer);
         try {
             csvWriter.writeAbfrageErgebnis(ergebnis);
-            System.out.println(writer.toString());
             Reader reader = new CharArrayReader(writer.toCharArray());
             CsvReader csvReader = new CsvReader(reader);
             AbfrageErgebnis neuesErgebnis = csvReader.readAbfrageErgebnis();
