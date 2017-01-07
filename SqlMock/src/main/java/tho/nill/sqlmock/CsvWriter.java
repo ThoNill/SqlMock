@@ -10,8 +10,7 @@ import tho.nill.konvertieren.ReturnValue;
 
 public class CsvWriter implements AbfrageWriter {
     private Writer writer;
-    private boolean mitNl = false;
-
+ 
     public CsvWriter(Writer writer) {
         super();
         this.writer = writer;
@@ -22,16 +21,13 @@ public class CsvWriter implements AbfrageWriter {
     public void writeAbfrageErgebnis(AbfrageErgebnis daten) throws IOException,
             SQLException {
         writeMetaData(daten.getMetaData());
-        nl();
         write("DatenList");
         writeDaten(daten.getDaten());
-        nl();
     }
 
 
     private void writeMetaData(ResultSetMetaData metaData) throws IOException,
             SQLException {
-        nl();
         write("Meta");
         if (metaData == null) {
             write(0);
@@ -61,7 +57,6 @@ public class CsvWriter implements AbfrageWriter {
     }
 
     private void writeDaten(Object[][] daten) throws IOException {
-        nl();
         write("Daten");
         int zeilenAnzahl = (daten == null) ? 0 : daten.length;
         write(zeilenAnzahl);
@@ -96,17 +91,7 @@ public class CsvWriter implements AbfrageWriter {
         writer.append(stop);
 
     }
-    private void nl() throws IOException {
-    }
-    
-    private void nl1() throws IOException {
-        if (mitNl) {
-            writer.append('\n');
-        } else {
-            mitNl = true;
-        }
-    }
-
+ 
     @Override
     public void write(List<ReturnValue> returnValues) throws IOException {
         for (ReturnValue v : returnValues) {
@@ -114,7 +99,6 @@ public class CsvWriter implements AbfrageWriter {
             writer.append('|');
             writer.append(v.getString());
             writer.append('\n');
-            nl();
         }
     }
 

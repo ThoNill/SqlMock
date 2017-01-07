@@ -18,7 +18,6 @@ public class CsvReader implements AbfrageReader {
 
     private Reader reader;
     private boolean hasData;
-    private boolean mitNl = false;
     private char gelesenesZeichen;
     int posInLine=0;
     int line=0;
@@ -33,17 +32,14 @@ public class CsvReader implements AbfrageReader {
     @Override
     public AbfrageErgebnis readAbfrageErgebnis() throws IOException {
         ResultSetMetaData metaData = readMetaData();
-        nl();
         prüfeKennung("DatenList");
         LOG.debug("Lese Daten ");
         Object daten[][] = readData();
         AbfrageErgebnis ergebnis = new AbfrageErgebnis(daten, metaData);
-        nl();
         return ergebnis;
     }
 
     private ResultSetMetaData readMetaData() throws IOException {
-        nl();
         prüfeKennung("Meta");
         int spaltenAnzahl = readInt();
         RowSetMetaDataImpl metaData = null;
@@ -71,7 +67,6 @@ public class CsvReader implements AbfrageReader {
 
   
     private Object[][] readData() throws IOException {
-        nl();
         prüfeKennung("Daten");
         int zeileAnzahl = readInt();
         Object[][] daten = null;
@@ -130,29 +125,13 @@ public class CsvReader implements AbfrageReader {
                 builder.append(z);
             }
 
-        } while (hasData && z != stop);
+        } while (z != stop);
         LOG.debug("Gelesen: "+ builder.toString());
         return builder.toString();
 
     }
 
-    private void nl() throws IOException {
-    }
-    
-    private void nl1() throws IOException {
-        if (!mitNl || !hasData) {
-            mitNl = true;
-            return;
-        }
-        char einZeichen = einZeichenLesen();
-        if (einZeichen != '\n' && hasData) {
-            throw new SqlMockException("Kein Zeileende im Stream Zeile " + line + " Zeichen: " + posInLine);
-        } else {
-            line++;
-            posInLine=0;
-        }
-    }
-
+  
     protected char einZeichenLesen() throws IOException {
         char[] einZeichen = new char[1];
         int anz = reader.read(einZeichen);
