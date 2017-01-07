@@ -1,4 +1,4 @@
-package tho.nill.io;
+package tho.nill.sqlmock;
 
 import java.io.IOException;
 import java.io.Reader;
@@ -11,11 +11,7 @@ import javax.sql.rowset.RowSetMetaDataImpl;
 
 import org.apache.log4j.Logger;
 
-import tho.nill.sqlmock.AbfrageDaten;
-import tho.nill.sqlmock.AbfrageErgebnis;
-import tho.nill.sqlmock.AbfrageKey;
-import tho.nill.sqlmock.AbfrageParameter;
-import tho.nill.sqlmock.SqlMockException;
+import tho.nill.konvertieren.ReturnValue;
 
 public class CsvReader implements AbfrageReader {
     private static final Logger LOG = Logger.getLogger(CsvReader.class);
@@ -33,42 +29,16 @@ public class CsvReader implements AbfrageReader {
         this.hasData = true;
     }
 
+ 
     @Override
-    public AbfrageDaten read() throws IOException {
-        AbfrageKey key = readAbfrageKey();
-        if (key != null) {
-            AbfrageErgebnis ergebnis = readAbfrageErgebnis();
-            return new AbfrageDaten(key, ergebnis);
-        } else {
-            return null;
-        }
-    }
-
-    protected AbfrageErgebnis readAbfrageErgebnis() throws IOException {
+    public AbfrageErgebnis readAbfrageErgebnis() throws IOException {
         ResultSetMetaData metaData = readMetaData();
         nl();
         prüfeKennung("DatenList");
-        int datenAnzahl = readInt();
         LOG.debug("Lese Daten ");
         Object daten[][] = readData();
         AbfrageErgebnis ergebnis = new AbfrageErgebnis(daten, metaData);
-
-        for (int i = 1; i < datenAnzahl; i++) {
-            LOG.debug("Lese Daten für " + i);
-            daten = readData();
-            ergebnis.addMehrDaten(i, daten);
-        }
         nl();
-        prüfeKennung("Function");
-        ergebnis.setFunktion(readString());
-        List<AbfrageParameter> parameter = readParameterList("ReturnParameter");
-        ergebnis.setResultParameter(parameter);
-        nl();
-        prüfeKennung("ReturnedInt");
-        ergebnis.setIntResult(readInt());
-        nl();
-        prüfeKennung("ReturnedBoolean");
-        ergebnis.setBooleanResult(readInt() == 1);
         return ergebnis;
     }
 
@@ -99,37 +69,7 @@ public class CsvReader implements AbfrageReader {
         return metaData;
     }
 
-    private AbfrageKey readAbfrageKey() throws IOException {
-        nl();
-        if (prüfeKennung("Abfrage")) {
-            String statement = readString().toString();
-            int index = readInt();
-            List<AbfrageParameter> parameter = readParameterList("Parameter");
-            return new AbfrageKey(statement, index, parameter);
-        } else {
-            return null;
-        }
-    }
-
-    private List<AbfrageParameter> readParameterList(String name)
-            throws IOException {
-        List<AbfrageParameter> parameter = new ArrayList<>();
-        nl();
-        prüfeKennung(name);
-        int anzahl = readInt();
-        for (int i = 1; i <= anzahl; i++) {
-            parameter.add(readParameter());
-        }
-        return parameter;
-    }
-
-    private AbfrageParameter readParameter() throws IOException {
-        int i = readInt();
-        String name = readString();
-        Object value = readString();
-        return new AbfrageParameter(i, name, value);
-    }
-
+  
     private Object[][] readData() throws IOException {
         nl();
         prüfeKennung("Daten");
@@ -227,6 +167,7 @@ public class CsvReader implements AbfrageReader {
     }
     
     
+    @Override
     public List<ReturnValue>  readReturnValues() throws IOException {
         List<ReturnValue> returnValues = new ArrayList<>();
         while(hasData) {

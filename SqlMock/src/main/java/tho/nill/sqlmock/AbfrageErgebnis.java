@@ -4,68 +4,31 @@ import java.sql.ResultSet;
 import java.sql.ResultSetMetaData;
 import java.sql.SQLException;
 import java.util.ArrayList;
-import java.util.List;
 
-import tho.nill.db.DataResultSet;
-import tho.nill.db.ResultSet2Array;
+import javax.sql.rowset.RowSetMetaDataImpl;
 
-public class AbfrageErgebnis extends ResultSet2Array{
+public class AbfrageErgebnis  {
 
     private ResultSetMetaData metaData;
-    private String funktion;
-    private List<AbfrageParameter> parameter = new ArrayList<>();
-    private List<Object[][]> mehrDaten = new ArrayList<>();
-    private int intResult;
-    private boolean booleanResult;
-    private int maxSchonAbgerufen = -1;
+    private Object[][] daten;
 
     public AbfrageErgebnis(ResultSet result) throws SQLException {
         super();
         this.metaData = convertMetaData(result);
-        this.funktion = "Unbekannt";
-        parameter = new ArrayList<>();
-        mehrDaten = new ArrayList<>();
-        mehrDaten.add(toData(result));
+        daten = toData(result);
     }
 
     public AbfrageErgebnis(Object[][] daten, ResultSetMetaData metaData) {
         this.metaData = metaData;
-        this.funktion = "Unbekannt";
-        parameter = new ArrayList<>();
-        mehrDaten = new ArrayList<>();
-        mehrDaten.add(daten);
-   
-    
-    }
-
-    public List<Object[][]> getDatenListe() {
-        return mehrDaten;
+        this.daten = daten;
     }
 
     public Object[][] getDaten() {
-        maxSchonAbgerufen++;
-        if (maxSchonAbgerufen >= 0 && maxSchonAbgerufen < mehrDaten.size()) {
-            return mehrDaten.get(maxSchonAbgerufen);
-        }
-        return null;
-    }
-
-    public boolean hasMoreDaten() {
-        return (maxSchonAbgerufen >= -1 && maxSchonAbgerufen < mehrDaten.size() - 1);
+        return daten;
     }
 
     public void setDaten(Object[][] daten) {
-        mehrDaten.add(0, daten);
-    }
-
-    public String getFunktion() {
-        return funktion;
-    }
-
-    public void setFunktion(String funktion) {
-        if (funktion != null) {
-            this.funktion = funktion;
-        }
+        this.daten = daten;
     }
 
     public ResultSetMetaData getMetaData() {
@@ -76,79 +39,56 @@ public class AbfrageErgebnis extends ResultSet2Array{
         this.metaData = metaData;
     }
 
-    public List<AbfrageParameter> getResultParameter() {
-        return parameter;
-    }
-
-    public void setResultParameter(List<AbfrageParameter> parameter) {
-        this.parameter = parameter;
-    }
-
-    public boolean addResultParameter(AbfrageParameter arg0) {
-        return parameter.add(arg0);
-    }
-
-    public Object[][] getMehrDaten(int index) {
-        if (index >= 0 && index < mehrDaten.size()) {
-            return mehrDaten.get(index);
-        }
-        return null;
-    }
-
-    public List<Object[][]> getMehrDaten() {
-        return mehrDaten;
-    }
-
-    public AbfrageParameter getResultParameter(int index) {
-        for(AbfrageParameter p : parameter) {
-            if (index == p.getIndex()) {
-                return p;
-            }
-        }
-        return parameter.get(index);
+    public ResultSet createResultSet() {
+        return new DataResultSet(getDaten(), getMetaData());
     }
     
-    public AbfrageParameter getResultParameter(String name) {
-        for(AbfrageParameter p : parameter) {
-            if (name.equals(p.getName())) {
-                return p;
+    public ResultSetMetaData convertMetaData(ResultSet result)
+            throws SQLException {
+        RowSetMetaDataImpl metaData = new RowSetMetaDataImpl();
+        if (result != null) {
+            ResultSetMetaData rMetaData = result.getMetaData();
+            int spaltenAnzahl = rMetaData.getColumnCount();
+            metaData.setColumnCount(spaltenAnzahl);
+            for (int i = 1; i <= spaltenAnzahl; i++) {
+                metaData.setColumnLabel(i, rMetaData.getColumnLabel(i));
             }
         }
-        return null;
+        return metaData;
     }
 
-
-    public void addMehrDaten(int index, Object[][] element) {
-        mehrDaten.add(index, element);
+    public Object[][] toData(ResultSet result) throws SQLException {
+        ArrayList<Object[]> list = new ArrayList<>();
+        int spaltenAnzahl = 0;
+        if (result != null) {
+            ResultSetMetaData metaData = result.getMetaData();
+            spaltenAnzahl = metaData.getColumnCount();
+            while (result.next()) {
+                Object[] zeile = new Object[spaltenAnzahl];
+                for (int i = 1; i <= spaltenAnzahl; i++) {
+                    zeile[i - 1] = result.getObject(i);
+                }
+                list.add(zeile);
+            }
+        }
+        return toData(list, spaltenAnzahl);
     }
 
-    public int getIntResult() {
-        return intResult;
+    private Object[][] toData(ArrayList<Object[]> list, int spaltenAnzahl) {
+        int zeilenAnzahl = list.size();
+        Object[][] daten = new Object[zeilenAnzahl][spaltenAnzahl];
+        int z = 0;
+        int s = 0;
+        for (Object[] zeile : list) {
+            s = 0;
+            for (Object obj : zeile) {
+                daten[z][s] = obj;
+                s++;
+            }
+            z++;
+        }
+        return daten;
     }
 
-    public void setIntResult(int intResult) {
-        this.intResult = intResult;
-    }
-
-    public boolean getBooleanResult() {
-        return booleanResult;
-    }
-
-    public void setBooleanResult(boolean booleanResult) {
-        this.booleanResult = booleanResult;
-    }
-
-    @Override
-    public String toString() {
-        return "AbfrageErgebnis [metaData=" + metaData + ", funktion="
-                + funktion + ", parameter=" + parameter + ", mehrDaten="
-                + mehrDaten + ", intResult=" + intResult + ", booleanResult="
-                + booleanResult + ", maxSchonAbgerufen=" + maxSchonAbgerufen
-                + "]";
-    }
-    
-   public ResultSet createResultSet() {   
-    return new DataResultSet(getDaten(),getMetaData());
-}
 
 }

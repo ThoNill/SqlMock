@@ -22,18 +22,17 @@ import java.sql.Timestamp;
 import java.util.Calendar;
 import java.util.Map;
 
-import tho.nill.db.AbfrageUmgebung;
-import tho.nill.io.AbfrageRepository;
+import tho.nill.sqlmock.AbfrageRepository;
 
 public class AusgabeCallableStatement extends AusgabePreparedStatement implements
         CallableStatement {
     private CallableStatement stmt;
 
     public AusgabeCallableStatement(Connection con,
-            AbfrageRepository repository, AbfrageUmgebung umgebung,
+            AbfrageRepository repository, 
             String stmtString,int resultSetType,
             int resultSetConcurrency, int resultSetHoldability) {
-        super(con, repository, umgebung, stmtString, resultSetType,resultSetConcurrency,resultSetHoldability);
+        super(con, repository,stmtString, resultSetType,resultSetConcurrency,resultSetHoldability);
     }
 
     @Override
@@ -455,297 +454,297 @@ public class AusgabeCallableStatement extends AusgabePreparedStatement implement
     @Override
     public void setAsciiStream(String parameterName, InputStream x, int length)
             throws SQLException {
-        setParameter(parameterName, x);
+        
 
     }
 
     @Override
     public void setAsciiStream(String parameterName, InputStream x, long length)
             throws SQLException {
-        setParameter(parameterName, x);
+        
 
     }
 
     @Override
     public void setAsciiStream(String parameterName, InputStream x)
             throws SQLException {
-        setParameter(parameterName, x);
+        
 
     }
 
     @Override
     public void setBigDecimal(String parameterName, BigDecimal x)
             throws SQLException {
-        setParameter(parameterName, x);
+        
 
     }
 
     @Override
     public void setBinaryStream(String parameterName, InputStream x, int length)
             throws SQLException {
-        setParameter(parameterName, x);
+        
 
     }
 
     @Override
     public void setBinaryStream(String parameterName, InputStream x, long length)
             throws SQLException {
-        setParameter(parameterName, x);
+        
 
     }
 
     @Override
     public void setBinaryStream(String parameterName, InputStream x)
             throws SQLException {
-        setParameter(parameterName, x);
+        
 
     }
 
     @Override
     public void setBlob(String parameterName, Blob x) throws SQLException {
-        setParameter(parameterName, x);
+        
 
     }
 
     @Override
     public void setBlob(String parameterName, InputStream inputStream,
             long length) throws SQLException {
-        setParameter(parameterName, inputStream);
+        
 
     }
 
     @Override
     public void setBlob(String parameterName, InputStream inputStream)
             throws SQLException {
-        setParameter(parameterName, inputStream);
+        
 
     }
 
     @Override
     public void setBoolean(String parameterName, boolean x) throws SQLException {
-        setParameter(parameterName, x);
+        
 
     }
 
     @Override
     public void setByte(String parameterName, byte x) throws SQLException {
-        setParameter(parameterName, x);
+        
 
     }
 
     @Override
     public void setBytes(String parameterName, byte[] x) throws SQLException {
-        setParameter(parameterName, x);
+        
 
     }
 
     @Override
     public void setCharacterStream(String parameterName, Reader reader,
             int length) throws SQLException {
-        setParameter(parameterName, reader);
+        
 
     }
 
     @Override
     public void setCharacterStream(String parameterName, Reader reader,
             long length) throws SQLException {
-        setParameter(parameterName, reader);
+        
 
     }
 
     @Override
     public void setCharacterStream(String parameterName, Reader reader)
             throws SQLException {
-        setParameter(parameterName, reader);
+        
 
     }
 
     @Override
     public void setClob(String parameterName, Clob x) throws SQLException {
-        setParameter(parameterName, x);
+        
 
     }
 
     @Override
     public void setClob(String parameterName, Reader reader, long length)
             throws SQLException {
-        setParameter(parameterName, reader);
+        
 
     }
 
     @Override
     public void setClob(String parameterName, Reader reader)
             throws SQLException {
-        setParameter(parameterName, reader);
+        
 
     }
 
     @Override
     public void setDate(String parameterName, Date x, Calendar cal)
             throws SQLException {
-        setParameter(parameterName, x);
+        
 
     }
 
     @Override
     public void setDate(String parameterName, Date x) throws SQLException {
-        setParameter(parameterName, x);
+        
 
     }
 
     @Override
     public void setDouble(String parameterName, double x) throws SQLException {
-        setParameter(parameterName, x);
+        
 
     }
 
     @Override
     public void setFloat(String parameterName, float x) throws SQLException {
-        setParameter(parameterName, x);
+        
 
     }
 
     @Override
     public void setInt(String parameterName, int x) throws SQLException {
-        setParameter(parameterName, x);
+        
 
     }
 
     @Override
     public void setLong(String parameterName, long x) throws SQLException {
-        setParameter(parameterName, x);
+        
 
     }
 
     @Override
     public void setNCharacterStream(String parameterName, Reader value,
             long length) throws SQLException {
-        setParameter(parameterName, value);
+        
 
     }
 
     @Override
     public void setNCharacterStream(String parameterName, Reader value)
             throws SQLException {
-        setParameter(parameterName, value);
+        
 
     }
 
     @Override
     public void setNClob(String parameterName, NClob value) throws SQLException {
-        setParameter(parameterName, value);
+        
 
     }
 
     @Override
     public void setNClob(String parameterName, Reader reader, long length)
             throws SQLException {
-        setParameter(parameterName, reader);
+        
 
     }
 
     @Override
     public void setNClob(String parameterName, Reader reader)
             throws SQLException {
-        setParameter(parameterName, reader);
+        
 
     }
 
     @Override
     public void setNString(String parameterName, String value)
             throws SQLException {
-        setParameter(parameterName, value);
+        
 
     }
 
     @Override
     public void setNull(String parameterName, int sqlType, String typeName)
             throws SQLException {
-        setParameter(parameterName, null);
+        
 
     }
 
     @Override
     public void setNull(String parameterName, int sqlType) throws SQLException {
-        setParameter(parameterName, null);
+        
 
     }
 
     @Override
     public void setObject(String parameterName, Object x) throws SQLException {
-        setParameter(parameterName, x);
+        
 
     }
 
     @Override
     public void setObject(String parameterName, Object x, int targetSqlType)
             throws SQLException {
-        setParameter(parameterName, x);
+        
 
     }
 
     @Override
     public void setObject(String parameterName, Object x, int targetSqlType,
             int scale) throws SQLException {
-        setParameter(parameterName, x);
+        
 
     }
 
     @Override
     public void setRowId(String parameterName, RowId x) throws SQLException {
-        setParameter(parameterName, x);
+        
 
     }
 
     @Override
     public void setSQLXML(String parameterName, SQLXML xmlObject)
             throws SQLException {
-        setParameter(parameterName, xmlObject);
+        
 
     }
 
     @Override
     public void setShort(String parameterName, short x) throws SQLException {
-        setParameter(parameterName, x);
+        
 
     }
 
     @Override
     public void setString(String parameterName, String x) throws SQLException {
-        setParameter(parameterName, x);
+        
 
     }
 
     @Override
     public void setTime(String parameterName, Time x) throws SQLException {
-        setParameter(parameterName, x);
+        
 
     }
 
     @Override
     public void setTime(String parameterName, Time x, Calendar cal)
             throws SQLException {
-        setParameter(parameterName, x);
+        
 
     }
 
     @Override
     public void setTimestamp(String parameterName, Timestamp x)
             throws SQLException {
-        setParameter(parameterName, x);
+        
 
     }
 
     @Override
     public void setTimestamp(String parameterName, Timestamp x, Calendar cal)
             throws SQLException {
-        setParameter(parameterName, x);
+        
 
     }
 
     @Override
     public void setURL(String parameterName, URL val) throws SQLException {
-        setParameter(parameterName, val);
+        
 
     }
 

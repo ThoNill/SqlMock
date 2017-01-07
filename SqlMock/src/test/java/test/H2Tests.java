@@ -16,6 +16,7 @@ import javax.sql.DataSource;
 import javax.sql.rowset.RowSetMetaDataImpl;
 
 import org.apache.log4j.Logger;
+import org.h2.jdbcx.JdbcConnectionPool;
 import org.junit.Test;
 
 import tho.nill.connection.AbfrageConfiguration;
@@ -23,12 +24,10 @@ import tho.nill.connection.ausgabe.AusgabeConnection;
 import tho.nill.connection.ausgabe.AusgabeDataSource;
 import tho.nill.connection.sammeln.SammlerConnection;
 import tho.nill.connection.sammeln.SammlerDataSource;
-import tho.nill.db.AbfrageUmgebung;
-import tho.nill.db.DataResultSet;
-import tho.nill.db.StatementBasis;
-import tho.nill.io.AbfrageRepository;
-
-import org.h2.jdbcx.JdbcConnectionPool;
+import tho.nill.sqlmock.AbfrageRepository;
+import tho.nill.sqlmock.AbfrageUmgebung;
+import tho.nill.sqlmock.DataResultSet;
+import tho.nill.sqlmock.StatementBasis;
 
 public class H2Tests {
     private static final Logger LOG = Logger.getLogger(H2Tests.class);
@@ -91,8 +90,7 @@ public class H2Tests {
             AbfrageUmgebung umgebung = new AbfrageUmgebung();
 
             String stmt = "select * from kunde ";
-            StatementBasis basis = new StatementBasis(repository, umgebung,
-                    stmt);
+            StatementBasis basis = new StatementBasis(repository);
 
             Statement statement = con.createStatement();
             ResultSet result = statement.executeQuery(stmt);
@@ -251,6 +249,7 @@ public class H2Tests {
 
     class CheckStatement implements SqlAktion {
 
+        @Override
         public void perform(Connection con) throws SQLException {
             Statement stmt = con.createStatement();
 
@@ -274,6 +273,7 @@ public class H2Tests {
 
     class CheckPreparedStatement implements SqlAktion {
 
+        @Override
         public void perform(Connection con) throws SQLException {
 
             String stmtString = "select * from kunde where name = ? ";
@@ -297,6 +297,7 @@ public class H2Tests {
 
     class CheckExecuteStatement implements SqlAktion {
 
+        @Override
         public void perform(Connection con) throws SQLException {
 
             String stmtString = "select * from kunde where name = ? ";

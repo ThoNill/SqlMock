@@ -1,4 +1,4 @@
-package tho.nill.io;
+package tho.nill.sqlmock;
 
 import java.io.IOException;
 import java.io.Writer;
@@ -6,10 +6,7 @@ import java.sql.ResultSetMetaData;
 import java.sql.SQLException;
 import java.util.List;
 
-import tho.nill.sqlmock.AbfrageDaten;
-import tho.nill.sqlmock.AbfrageErgebnis;
-import tho.nill.sqlmock.AbfrageKey;
-import tho.nill.sqlmock.AbfrageParameter;
+import tho.nill.konvertieren.ReturnValue;
 
 public class CsvWriter implements AbfrageWriter {
     private Writer writer;
@@ -20,55 +17,17 @@ public class CsvWriter implements AbfrageWriter {
         this.writer = writer;
     }
 
-    @Override
-    public void write(AbfrageDaten daten) throws IOException, SQLException {
-        writeAbfrageKey(daten.getKey());
-        writeAbfrageErgebnis(daten.getErgebnis());
-    }
 
+    @Override
     public void writeAbfrageErgebnis(AbfrageErgebnis daten) throws IOException,
             SQLException {
         writeMetaData(daten.getMetaData());
         nl();
         write("DatenList");
-        List<Object[][]> mehrDaten = daten.getDatenListe();
-        write(mehrDaten.size());
-        for (Object[][] d : mehrDaten) {
-            writeDaten(d);
-        }
+        writeDaten(daten.getDaten());
         nl();
-        write("Function");
-        write(daten.getFunktion());
-        writeParameter("ReturnParameter", daten.getResultParameter());
-        nl();
-        write("ReturnedInt");
-        write(daten.getIntResult());
-        nl();
-        write("ReturnedBoolean");
-        write((daten.getBooleanResult()) ? "1" : "0");
     }
 
-    private void writeAbfrageKey(AbfrageKey key) throws IOException {
-        nl();
-        write("Abfrage");
-        write(key.getStatement());
-        write(key.getIndex());
-        writeParameter("Parameter", key.getParameter());
-
-    }
-
-    private void writeParameter(String name, List<AbfrageParameter> parameter)
-            throws IOException {
-        nl();
-        write(name);
-        write(parameter.size());
-        for (AbfrageParameter p : parameter) {
-            write(p.getIndex());
-            write(p.getName());
-            write(p.getValue());
-        }
-
-    }
 
     private void writeMetaData(ResultSetMetaData metaData) throws IOException,
             SQLException {
@@ -148,6 +107,7 @@ public class CsvWriter implements AbfrageWriter {
         }
     }
 
+    @Override
     public void write(List<ReturnValue> returnValues) throws IOException {
         for (ReturnValue v : returnValues) {
             writer.append(v.getString());

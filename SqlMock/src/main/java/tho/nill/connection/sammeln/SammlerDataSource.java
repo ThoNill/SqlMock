@@ -9,8 +9,8 @@ import java.util.logging.Logger;
 import javax.sql.DataSource;
 
 import tho.nill.connection.AbfrageConfiguration;
-import tho.nill.db.AbfrageUmgebung;
-import tho.nill.io.AbfrageRepository;
+import tho.nill.sqlmock.AbfrageRepository;
+import tho.nill.sqlmock.AbfrageUmgebung;
 
 public class SammlerDataSource implements DataSource {
     private static AbfrageConfiguration defaultConfiguration = new AbfrageConfiguration(

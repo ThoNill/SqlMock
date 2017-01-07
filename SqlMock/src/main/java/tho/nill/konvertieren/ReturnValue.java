@@ -1,6 +1,6 @@
-package tho.nill.io;
+package tho.nill.konvertieren;
 
-import tho.nill.konvertieren.KonverterGruppe;
+
 
 public class ReturnValue {
     private String text;

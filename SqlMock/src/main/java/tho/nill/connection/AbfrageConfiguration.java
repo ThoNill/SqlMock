@@ -1,12 +1,5 @@
 package tho.nill.connection;
 
-import java.io.File;
-import java.io.FileReader;
-import java.io.IOException;
-import java.io.Reader;
-
-import tho.nill.io.CsvReader;
-import tho.nill.sqlmock.SqlMockException;
 
 public class AbfrageConfiguration {
     private String fileName;

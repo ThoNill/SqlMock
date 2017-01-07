@@ -1,6 +1,7 @@
 package test;
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.fail;
 
 import java.sql.CallableStatement;
 import java.sql.Connection;
@@ -16,13 +17,11 @@ import org.junit.Test;
 
 import tho.nill.connection.AbfrageConfiguration;
 import tho.nill.connection.ausgabe.AusgabeConnection;
-import tho.nill.connection.sammeln.SammlerBasisConnection;
 import tho.nill.connection.sammeln.SammlerConnection;
 
 public class StoredProcedureTest {
 
     public StoredProcedureTest() {
-        // TODO Auto-generated constructor stub
     }
 
     private static final String storedProcedure = " CREATE PROCEDURE pageStudents (IN name CHAR(40), OUT anzahl INT) LANGUAGE "

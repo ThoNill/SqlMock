@@ -1,4 +1,4 @@
-package tho.nill.db;
+package tho.nill.sqlmock;
 
 import java.io.File;
 import java.io.FileReader;
@@ -11,11 +11,6 @@ import java.sql.SQLException;
 import org.apache.log4j.Logger;
 
 import tho.nill.connection.AbfrageConfiguration;
-import tho.nill.connection.sammeln.SammlerConnection;
-import tho.nill.io.AbfrageRepository;
-import tho.nill.io.CsvReader;
-import tho.nill.io.CsvWriter;
-import tho.nill.sqlmock.SqlMockException;
 
 public class AbfrageUmgebung {
     private static final Logger LOG = Logger.getLogger(AbfrageUmgebung.class);
@@ -24,16 +19,7 @@ public class AbfrageUmgebung {
         super();
     }
 
-    private int updateCount = 0;
-
-    public int getUpdateCount() {
-        return updateCount;
-    }
-
-    public void updateOrInsert() {
-        updateCount++;
-    }
-    
+   
     public void prepareRepository(AbfrageRepository repository, AbfrageConfiguration configuration) {
         File datei = new File(configuration.getFileName());
         if (datei.isFile() && datei.canRead()) {

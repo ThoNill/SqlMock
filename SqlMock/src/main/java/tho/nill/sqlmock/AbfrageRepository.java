@@ -1,31 +1,24 @@
-package tho.nill.io;
+package tho.nill.sqlmock;
+
 
 import java.io.ByteArrayInputStream;
-import java.io.ByteArrayOutputStream;
 import java.io.CharArrayWriter;
 import java.io.IOException;
 import java.io.InputStreamReader;
-import java.io.OutputStreamWriter;
 import java.io.Writer;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
 
-import tho.nill.db.DataResultSet;
-import tho.nill.sqlmock.AbfrageDaten;
-import tho.nill.sqlmock.AbfrageErgebnis;
-import tho.nill.sqlmock.AbfrageKey;
+import tho.nill.konvertieren.ReturnValue;
 
 public class AbfrageRepository {
-    private HashMap<AbfrageKey, AbfrageDaten> map;
     private List<ReturnValue> returnValues = new ArrayList<>();
     private int indexReturnValue = 0;
 
     public AbfrageRepository() {
         super();
-        map = new HashMap<>();
     }
 
     public void putReturnValue(String text) {
@@ -73,30 +66,13 @@ public class AbfrageRepository {
         return v.getBoolean();
     }
 
-    public AbfrageDaten get(AbfrageKey key) {
-        return map.get(key);
-    }
-
-    public AbfrageDaten put(AbfrageDaten value) {
-        return map.put(value.getKey(), value);
-    }
-
+ 
     public void write(AbfrageWriter writer) throws IOException, SQLException {
         writer.write(returnValues);
-        /*
-        for (AbfrageDaten daten : map.values()) {
-            writer.write(daten);
-        }*/
     }
 
     public void read(AbfrageReader reader) throws IOException {
         returnValues = reader.readReturnValues();
-    /*    while (reader.hasData()) {
-            AbfrageDaten daten = reader.read();
-            if (daten != null) {
-                this.put(daten);
-            }
-        }*/
     }
 
 }
