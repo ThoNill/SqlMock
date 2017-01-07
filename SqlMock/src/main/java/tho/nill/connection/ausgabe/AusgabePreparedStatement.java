@@ -31,9 +31,8 @@ public class AusgabePreparedStatement extends AusgabeStatement implements
     
     public AusgabePreparedStatement(Connection con,
             AbfrageRepository repository, 
-            String stmtString,int resultSetType,
-            int resultSetConcurrency, int resultSetHoldability) {
-        super(con, repository,resultSetType,resultSetConcurrency,resultSetHoldability);
+            String stmtString) {
+        super(con, repository);
         this.stmtString = stmtString;
     }
 

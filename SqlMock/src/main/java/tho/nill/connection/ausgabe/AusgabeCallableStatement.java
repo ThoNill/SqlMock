@@ -30,9 +30,8 @@ public class AusgabeCallableStatement extends AusgabePreparedStatement implement
 
     public AusgabeCallableStatement(Connection con,
             AbfrageRepository repository, 
-            String stmtString,int resultSetType,
-            int resultSetConcurrency, int resultSetHoldability) {
-        super(con, repository,stmtString, resultSetType,resultSetConcurrency,resultSetHoldability);
+            String stmtString) {
+        super(con, repository,stmtString);
     }
 
     @Override

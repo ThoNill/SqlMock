@@ -11,29 +11,11 @@ import tho.nill.sqlmock.AbfrageRepository;
 import tho.nill.sqlmock.StatementBasis;
 
 public class AusgabeStatement extends StatementBasis implements Statement {
-    private boolean closeOnCompletion;
-    private boolean open = true;
-    private boolean poolable;
-    private boolean escapeProcessing;
-    private int fetchDirection;
-    private int fetchSize;
-    private int maxFieldSize;
-    private int maxRows;
-    private int queryTimeout;
-    private String cursorName;
     private Connection con;
-    private int resultSetConcurrency;
-    private int resultSetType;
-    private int resultSetHoldability;
 
-    public AusgabeStatement(Connection con, AbfrageRepository repository,
-            int resultSetType,
-            int resultSetConcurrency, int resultSetHoldability) {
+    public AusgabeStatement(Connection con, AbfrageRepository repository) {
         super(repository);
         this.con = con;
-        this.resultSetType = resultSetType;
-        this.resultSetConcurrency   =resultSetConcurrency;
-        this.resultSetHoldability = resultSetHoldability;
     }
 
     @Override
@@ -58,12 +40,10 @@ public class AusgabeStatement extends StatementBasis implements Statement {
 
     @Override
     public void close() throws SQLException {
-        this.open = false;
     }
 
     @Override
     public void closeOnCompletion() throws SQLException {
-        this.closeOnCompletion = true;
     }
 
     @Override
@@ -139,12 +119,12 @@ public class AusgabeStatement extends StatementBasis implements Statement {
 
     @Override
     public int getFetchDirection() throws SQLException {
-        return this.fetchDirection;
+        return getIntResult();
     }
 
     @Override
     public int getFetchSize() throws SQLException {
-        return this.fetchSize;
+        return getIntResult();
     }
 
     @Override
@@ -154,27 +134,27 @@ public class AusgabeStatement extends StatementBasis implements Statement {
 
     @Override
     public int getMaxFieldSize() throws SQLException {
-        return this.maxFieldSize;
+        return getIntResult();
     }
 
     @Override
     public int getMaxRows() throws SQLException {
-        return this.maxRows;
+        return getIntResult();
     }
 
     @Override
     public boolean getMoreResults() throws SQLException {
-        return hasMoreDaten();
+        return getBooleanResult();
     }
 
     @Override
     public boolean getMoreResults(int current) throws SQLException {
-        return hasMoreDaten();
+        return getBooleanResult();
     }
 
     @Override
     public int getQueryTimeout() throws SQLException {
-        return this.queryTimeout;
+        return getIntResult();
     }
 
     @Override
@@ -184,22 +164,23 @@ public class AusgabeStatement extends StatementBasis implements Statement {
 
     @Override
     public int getResultSetConcurrency() throws SQLException {
-        return this.resultSetConcurrency;
+        return getIntResult();
     }
 
     @Override
     public int getResultSetHoldability() throws SQLException {
-        return resultSetHoldability;
+        return getIntResult();
     }
 
     @Override
     public int getResultSetType() throws SQLException {
-        return resultSetType;
+        return getIntResult();
     }
 
     @Override
     public int getUpdateCount() throws SQLException {
         return getIntResult();
+        
     }
 
     @Override
@@ -209,57 +190,54 @@ public class AusgabeStatement extends StatementBasis implements Statement {
 
     @Override
     public boolean isCloseOnCompletion() throws SQLException {
-        return closeOnCompletion;
+        return getBooleanResult();
+        
     }
 
     @Override
     public boolean isClosed() throws SQLException {
-        return !open;
+        return getBooleanResult();
+        
     }
 
     @Override
     public boolean isPoolable() throws SQLException {
-        return poolable;
+        return getBooleanResult();
+        
     }
 
     @Override
     public boolean isWrapperFor(Class<?> iface) throws SQLException {
-        return iface.isInstance(this);
+        return getBooleanResult();
+        
     }
 
     @Override
     public void setEscapeProcessing(boolean enable) throws SQLException {
-        this.escapeProcessing = enable;
     }
 
     @Override
     public void setFetchDirection(int direction) throws SQLException {
-        this.fetchDirection = direction;
     }
 
     @Override
     public void setFetchSize(int rows) throws SQLException {
-        this.fetchSize = rows;
     }
 
     @Override
     public void setMaxFieldSize(int max) throws SQLException {
-        this.maxFieldSize = max;
     }
 
     @Override
     public void setMaxRows(int max) throws SQLException {
-        this.maxRows = max;
     }
 
     @Override
     public void setPoolable(boolean poolable) throws SQLException {
-        this.poolable = poolable;
     }
 
     @Override
     public void setQueryTimeout(int seconds) throws SQLException {
-        this.queryTimeout = queryTimeout;
     }
 
     @Override
@@ -272,7 +250,6 @@ public class AusgabeStatement extends StatementBasis implements Statement {
 
     @Override
     public void setCursorName(String arg0) throws SQLException {
-        this.cursorName = arg0;
     }
 
 }
