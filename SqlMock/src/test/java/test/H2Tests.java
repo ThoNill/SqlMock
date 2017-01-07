@@ -87,8 +87,7 @@ public class H2Tests {
             insertTestData(con, new String[][] { { "Thomas", "Nill" } });
 
             AbfrageRepository repository = new AbfrageRepository();
-            AbfrageUmgebung umgebung = new AbfrageUmgebung();
-
+  
             String stmt = "select * from kunde ";
             StatementBasis basis = new StatementBasis(repository);
 

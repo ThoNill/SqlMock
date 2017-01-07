@@ -427,7 +427,7 @@ public class DataResultSet implements ResultSet {
 
     @Override
     public short getShort(int columnIndex) throws SQLException {
-        return Short.valueOf(getShort(columnIndex));
+        return Short.valueOf(getString(columnIndex));
     }
 
     @Override
