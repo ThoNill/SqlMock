@@ -4,9 +4,13 @@ import java.io.IOException;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 
+import org.apache.log4j.Logger;
+
 import tho.nill.konvertieren.KonverterGruppe;
 
 public class StatementBasis  {
+    private static final Logger LOG = Logger.getLogger(StatementBasis.class);
+    
     private AbfrageRepository repository;
 
     public StatementBasis(AbfrageRepository repository) {
@@ -28,9 +32,9 @@ public class StatementBasis  {
         try {
             return repository.returnResultSet();
         } catch (IOException e) {
-            e.printStackTrace();
+            LOG.error("Ausnahme ",e);
             throw new IllegalArgumentException(
-                    "Das ResultSet konnte nicht erzeugt werden ");
+                    "Das ResultSet konnte nicht erzeugt werden ",e);
         }
     }
 
@@ -41,7 +45,7 @@ public class StatementBasis  {
 
             return ergebnis.createResultSet();
         } catch (IOException e) {
-            e.printStackTrace();
+            LOG.error("Ausnahme ",e);
             return null;
         }
     }

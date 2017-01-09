@@ -127,7 +127,6 @@ public class TesteAbfrageRepository {
                         .getMetaData().getColumnLabel(2));
             }
         } catch (Exception e) {
-            e.printStackTrace();
             LOG.error("Unerwartete Ausnahme {}",e);
             fail("unerwartete Ausnahme");
         }

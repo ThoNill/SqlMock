@@ -6,9 +6,13 @@ import java.sql.ResultSetMetaData;
 import java.sql.SQLException;
 import java.util.List;
 
+import org.apache.log4j.Logger;
+
 import tho.nill.konvertieren.ReturnValue;
 
 public class CsvWriter implements AbfrageWriter {
+    private static final Logger LOG = Logger.getLogger(CsvWriter.class);
+    
     private Writer writer;
  
     public CsvWriter(Writer writer) {
@@ -39,17 +43,20 @@ public class CsvWriter implements AbfrageWriter {
                     write(metaData.getColumnName(i));
                 } catch (Exception e) {
                     write("");
+                    LOG.debug("Kein ColumnName im MetaModell vorhanden", e);
                 }
                 write(metaData.getColumnLabel(i));
                 try {
                     write(metaData.getColumnTypeName(i));
                 } catch (Exception e) {
                     write("");
+                    LOG.debug("Kein TypeName im MetaModell vorhanden", e);
                 }
                 try {
                     write(metaData.getColumnType(i));
                 } catch (Exception e) {
                     write("0");
+                    LOG.debug("Kein ColumnType im MetaModell vorhanden", e);
                 }
 
             }

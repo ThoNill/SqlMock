@@ -1,7 +1,6 @@
 package tho.nill.sqlmock;
 
 import java.io.InputStream;
-
 import java.io.Reader;
 import java.math.BigDecimal;
 import java.net.URL;

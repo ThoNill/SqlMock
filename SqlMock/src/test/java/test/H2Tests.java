@@ -1,6 +1,7 @@
 package test;
 
 import static org.junit.Assert.assertEquals;
+
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
@@ -38,10 +39,7 @@ public class H2Tests {
             Class.forName("org.h2.Driver");
             Connection conn = DriverManager.getConnection("jdbc:h2:mem:");
             conn.close();
-        } catch (ClassNotFoundException e) {
-            LOG.error("Unerwartete Ausnahme {}", e);
-            fail("Unerwartete Ausnahme");
-        } catch (SQLException e) {
+        } catch (ClassNotFoundException | SQLException e) {
             LOG.error("Unerwartete Ausnahme {}", e);
             fail("Unerwartete Ausnahme");
         }
@@ -104,10 +102,7 @@ public class H2Tests {
             assertEquals("Nill", lookupResult.getString(2));
 
             con.close();
-        } catch (ClassNotFoundException e) {
-            LOG.error("Unerwartete Ausnahme {}", e);
-            fail("Unerwartete Ausnahme");
-        } catch (SQLException e) {
+        } catch (ClassNotFoundException | SQLException e) {
             LOG.error("Unerwartete Ausnahme {}", e);
             fail("Unerwartete Ausnahme");
         }
@@ -147,7 +142,6 @@ public class H2Tests {
             SammlerDataSource dataSource = new SammlerDataSource(cp);
             dieDatenSammelnUndWiederholen(dataSource, aktion, testFileName);
         } catch (ClassNotFoundException e) {
-            e.printStackTrace();
             LOG.error("Unerwartete Ausnahme {}", e);
             fail("Unerwartete Ausnahme");
 
@@ -180,7 +174,6 @@ public class H2Tests {
             ausgabe.close();
 
         } catch (Exception e) {
-            e.printStackTrace();
             LOG.error("Unerwartete Ausnahme {}", e);
             fail("Unerwartete Ausnahme");
         }
@@ -189,11 +182,7 @@ public class H2Tests {
     protected void testdatenErzeugen(DataSource dataSource)
             throws SQLException {
         Connection con = dataSource.getConnection();
-        createTestTable(con);
-        insertTestData(con, new String[][] { { "Carl Friedrich", "Gauﬂ" } });
-        insertTestData(con, new String[][] { { "Emmy", "Noether" } });
-        insertTestData(con, new String[][] { { "Emil", "Artin" } });
-        insertTestData(con, new String[][] { { "Leonhard", "Euler" } });
+        testdatenAnlegen(con);
         con.close();
     }
 
@@ -207,7 +196,6 @@ public class H2Tests {
             dieDatenSammelnUndWiederholen(con, aktion, testFileName);
             con.close();
         } catch (ClassNotFoundException | SQLException e) {
-            e.printStackTrace();
             LOG.error("Unerwartete Ausnahme {}", e);
             fail("Unerwartete Ausnahme");
 
@@ -219,11 +207,7 @@ public class H2Tests {
 
         try {
 
-            createTestTable(con);
-            insertTestData(con, new String[][] { { "Carl Friedrich", "Gauﬂ" } });
-            insertTestData(con, new String[][] { { "Emmy", "Noether" } });
-            insertTestData(con, new String[][] { { "Emil", "Artin" } });
-            insertTestData(con, new String[][] { { "Leonhard", "Euler" } });
+            testdatenAnlegen(con);
 
             SammlerConnection.setDefaultConfiguration(new AbfrageConfiguration(
                     testFileName, true));
@@ -240,10 +224,17 @@ public class H2Tests {
             ausgabe.close();
 
         } catch (Exception e) {
-            e.printStackTrace();
             LOG.error("Unerwartete Ausnahme {}", e);
             fail("Unerwartete Ausnahme");
         }
+    }
+
+    protected void testdatenAnlegen(Connection con) throws SQLException {
+        createTestTable(con);
+        insertTestData(con, new String[][] { { "Carl Friedrich", "Gauﬂ" } });
+        insertTestData(con, new String[][] { { "Emmy", "Noether" } });
+        insertTestData(con, new String[][] { { "Emil", "Artin" } });
+        insertTestData(con, new String[][] { { "Leonhard", "Euler" } });
     }
 
     class CheckStatement implements SqlAktion {
@@ -261,6 +252,7 @@ public class H2Tests {
                 fail("Abfrage muss ein Ergebnis liefern");
             }
             result.close();
+            stmt.close();
         }
     };
 
@@ -285,6 +277,7 @@ public class H2Tests {
                 fail("Abfrage muss ein Ergebnis liefern");
             }
             result.close();
+            stmt.close();
         }
     }
 
@@ -310,9 +303,12 @@ public class H2Tests {
                     fail("Abfrage muss ein Ergebnis liefern");
                 }
                 result.close();
+                stmt.close();
             } else {
+                stmt.close();
                 fail("Execute gibt falsch zur¸ck");
             }
+            
         }
     }
 

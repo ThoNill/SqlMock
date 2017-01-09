@@ -12,6 +12,7 @@ import java.sql.SQLException;
 import java.sql.Statement;
 import java.sql.Types;
 
+import org.apache.log4j.Logger;
 import org.junit.Ignore;
 import org.junit.Test;
 
@@ -20,6 +21,8 @@ import tho.nill.connection.ausgabe.AusgabeConnection;
 import tho.nill.connection.sammeln.SammlerConnection;
 
 public class StoredProcedureTest {
+    private static final Logger LOG = Logger.getLogger(StoredProcedureTest.class);
+
 
     public StoredProcedureTest() {
     }
@@ -28,6 +31,10 @@ public class StoredProcedureTest {
             + " JAVA PARAMETER STYLE JAVA READS SQL DATA "
             + "DYNAMIC RESULT SETS 2 EXTERNAL "
             + " NAME 'test.StoredProcedureTest.procedure' ";
+    
+    public static final String SQL1 = "SELECT vorname, name from kunde where name = ? ";
+    public static final String SQL2 = "SELECT name from kunde order by name asc ";
+
     @Ignore
     @Test
     public void testIt() {
@@ -36,19 +43,17 @@ public class StoredProcedureTest {
             conn = createTestConnection();
             testFürDieseConnetion(conn);
         } catch (SQLException sqlex) {
-            System.err.println("SQL Error:" + sqlex.getMessage());
-            sqlex.printStackTrace();
+            LOG.error("Ausnahme {} ",sqlex);
             fail("Nicht erwartete Ausnahme");
         } catch (Exception ex) {
-            System.err.println("Error:" + ex.getMessage());
-            ex.printStackTrace();
+            LOG.error("Ausnahme {}" + ex);
             fail("Nicht erwartete Ausnahme");
         } finally {
             try {
                 if (conn != null)
                     conn.close();
             } catch (SQLException ex2) {
-                ex2.printStackTrace();
+                LOG.error("Ausnahme {}" + ex2);
                 fail("Nicht erwartete Ausnahme");
             }
         }
@@ -73,18 +78,16 @@ public class StoredProcedureTest {
             ausgabe.close();
             
         } catch (SQLException sqlex) {
-            System.err.println("SQL Error:" + sqlex.getMessage());
-            sqlex.printStackTrace();
+            LOG.error("Ausnahme {} ",sqlex);
             fail("Nicht erwartete Ausnahme");
         } catch (Exception ex) {
-            System.err.println("Error:" + ex.getMessage());
-            ex.printStackTrace();
+            LOG.error("Ausnahme {} ",ex);
             fail("Nicht erwartete Ausnahme");
         } finally {            try {
                 if (conn != null)
                     conn.close();
             } catch (SQLException ex2) {
-                ex2.printStackTrace();
+                LOG.error("Ausnahme {} ",ex2);
                 fail("Nicht erwartete Ausnahme");
             }
         }
@@ -127,12 +130,10 @@ public class StoredProcedureTest {
                 fail("Es sollte ein ResultSet geben");
             }
         } catch (SQLException sqlex) {
-            System.err.println("SQL Error:" + sqlex.getMessage());
-            sqlex.printStackTrace();
+            LOG.error("Ausnahme {} ",sqlex);
             fail("Nicht erwartete Ausnahme");
         } catch (Exception ex) {
-            System.err.println("Error:" + ex.getMessage());
-            ex.printStackTrace(); 
+            LOG.error("Ausnahme {} ",ex);
             fail("Nicht erwartete Ausnahme");
         } finally {
             try {
@@ -145,7 +146,7 @@ public class StoredProcedureTest {
                 if (cs != null)
                     cs.close();
             } catch (SQLException ex2) {
-                ex2.printStackTrace();
+                LOG.error("Ausnahme {} ",ex2);
                 fail("Nicht erwartete Ausnahme");
             }
         }
@@ -157,14 +158,11 @@ public class StoredProcedureTest {
         Class.forName("org.apache.derby.jdbc.EmbeddedDriver").newInstance();
         conn = DriverManager
                 .getConnection("jdbc:derby:memory:derbyDb;create=true");
-        System.out.println("Connection established successfully!");
+        LOG.debug("Connection established successfully!");
 
         createTestDaten(conn);
         return conn;
     }
-
-    public static String SQL1 = "SELECT vorname, name from kunde where name = ? ";
-    public static String SQL2 = "SELECT name from kunde order by name asc ";
 
     public final static void procedure(String name, int[] anzahl,
             ResultSet[] rs1, ResultSet[] rs2) throws SQLException {
@@ -180,16 +178,16 @@ public class StoredProcedureTest {
             ps2 = con.prepareStatement(SQL2);
             rs2[0] = ps2.executeQuery();
 
-            System.out.println("Abfrage ausgeführt");
+            LOG.debug("Abfrage ausgeführt");
         } catch (SQLException sqlex) {
-            sqlex.printStackTrace();
+            LOG.error("Ausnahme {} ",sqlex);
             throw sqlex;
         } finally {
             try {
                 if (con != null)
                     con.close();
             } catch (SQLException sqlex1) {
-                sqlex1.printStackTrace();
+                LOG.error("Ausnahme {} ",sqlex1);
             }
         }
     }
